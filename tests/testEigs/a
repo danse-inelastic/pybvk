@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+rm -f system dos eigval eigvec freqs D.py *.pyc
+
+( cd input-generators/syspy ; ./$1 ; cp system ../.. ; rm -f system )
+
+mk 
+rm *.o
+
+h 1>tmp.py 2>/dev/null
+
+echo "import numpy" > D.py
+echo "" >> D.py
+cat tmp.py >> D.py
+echo "" >> D.py
+rm tmp.py
+

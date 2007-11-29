@@ -1,0 +1,39 @@
+#!/usr/bin/perl -w
+
+use System;
+
+my $a=1.0;
+my $b= $a;
+my $c= (494.0/458.0)*$a;  # FROM LB.
+
+my $m=1.9065974e-25;
+
+$cell=[
+  $a,$b, 0,
+  $a, 0,$c,
+   0,$b,$c
+];
+
+my $atoms=[
+  [ "In", $m ],
+];
+
+my $sites=[
+  [ 0,0,0,             0 ],
+];
+
+my $bonds=[
+  [ 0,0, System::axial([  $a,   0,  $c], 12.316,-2.064) ],
+  [ 0,0, System::axial([  $a,  $b,   0], 16.763,-2.759) ],
+  [ 0,0, System::axial([2*$a,   0,   0],  1.278, 0.929) ],
+  [ 0,0, System::axial([   0,   0,2*$c],  1.695, 0.294) ],
+  [ 0,0, System::axial([2*$a,  $b,  $c], -0.452, 0.002) ],
+  [ 0,0, System::axial([  $a,  $b,2*$c], -0.601, 0.268) ],
+  [ 0,0, System::axial([2*$a,   0,2*$c], -0.423,-0.216) ],
+  [ 0,0, System::axial([2*$a,2*$b,   0], -1.130, 0.033) ],
+  [ 0,0, System::axial([3*$a,1*$b,   0],  0.167, 0.000) ],
+  [ 0,0, System::axial([  $a,   0,3*$c], -0.026, 0.000) ],
+  [ 0,0, System::axial([3*$a,   0,1*$c],  0.225, 0.000) ],
+];
+
+System::write($cell,$atoms,$sites,$bonds,"fct");

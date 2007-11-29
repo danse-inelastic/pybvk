@@ -1,0 +1,16 @@
+
+In order to use this, you first have to set everything up.  
+  Copy these files into the bvk/newbvk directory, 
+OR 
+  copy bvk/newbvk/* (including input-generators) into a directory, then copy
+    these files into the same directory. 
+
+Make sure that mk actually works -- there are often issues with acml.
+
+Then you type:
+
+$ ./manyTest.py <System_Name> <Number of basis vectors> <Number of tests to run>
+
+For example, you might like to test B2 NiAl 10 times:
+
+$ ./manyTest.py NiAl 2 10

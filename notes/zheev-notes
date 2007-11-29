@@ -1,0 +1,44 @@
+THIS WORKS
+
+typedef struct {
+  int n;
+  doublecomplex* e;
+} DynamicalMatrix;  // "Dynamical" is not a word.
+
+void dynamicalMatrixAllocate(DynamicalMatrix* d,int n) {
+  d->n=n;
+  d->e=(doublecomplex*)malloc(sizeof(doublecomplex)*n*n);
+}
+
+void dynamicalMatrixSet(DynamicalMatrix* d,int r,int c,double re,double im) {
+  doublecomplex* v=d->e+(d->n*r)+c;
+  v->real=re;
+  v->imag=im;
+}
+
+---
+
+  DynamicalMatrix d;
+  dynamicalMatrixAllocate(&d,3);
+
+//zgeev('N','V',N,(doublecomplex*)elts,N,(doublecomplex*)v.elts,
+//      NULL,1,(doublecomplex*)m.elts,N,&info);
+
+dynamicalMatrixSet(&d,0,0,1,0);
+  dynamicalMatrixSet(&d,0,1,2,0);
+    dynamicalMatrixSet(&d,0,2,3,0);
+  dynamicalMatrixSet(&d,1,1,-2,0);
+    dynamicalMatrixSet(&d,1,2,-3,0);
+    dynamicalMatrixSet(&d,2,2,-1,0);
+
+double v[d.n];
+int info=-1;
+// Fill array in C order in upper triangle and call with 'L' and it works
+zheev('V','L',d.n,d.e,d.n,v,&info);
+printf("info: %d\n",info);
+
+printf("%lf %lf %lf\n",v[0],v[1],v[2]);
+
+1ST eigenvector is then in d.e+0, d.e+1, d.e+2
+2nd eigenvector is then in d.e+3, d.e+4, d.e+5
+etc.

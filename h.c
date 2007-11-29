@@ -21,8 +21,8 @@ int main() {
   printf("%d Q points\n",nq);
 
   EigenValue* vs;
-//  int nv=bvkCompute(system,nq,qs,&vs,NULL);
-  EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
+  int nv=bvkCompute(system,nq,qs,&vs,NULL);
+//  EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
 
   qpointWrite("qs",nq,qs);
   eigenvalueWrite("eigval",nv,vs);

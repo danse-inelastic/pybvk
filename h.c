@@ -16,8 +16,8 @@ int main() {
   systemComputeBonds(system);
 
   int nq;
-//  QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
-  QPoint* qs=qpointRead("WeightedQ",&nq);
+  QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
+//  QPoint* qs=qpointRead("WeightedQ",&nq);
   printf("%d Q points\n",nq);
 
   EigenValue* vs;

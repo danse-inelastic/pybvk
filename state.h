@@ -126,10 +126,19 @@ static inline void qpointWrite(char* fn,int nq,QPoint* qs) {
   close(io);
 }
 
-static inline void eigenvalueWrite(char* fn,int nv,EigenValue* vs) {
+static inline void eigenvalueWrite(char* fn,int nq,int nSites,EigenValue* vs) {
   int io=open(fn,O_TRUNC|O_CREAT|O_WRONLY,0644);
-//  write(io,&nv,sizeof(nv));  // XXX: Add these
-  write(io,vs,nv*sizeof(EigenValue));
+  char title[64] = "Omega2";
+  int version = 1;
+  char comment[1024] = "Omega**2 from a BvK simulation.";
+  int dimension = 3;
+  write(io,&title,sizeof(title));
+  write(io,&version,sizeof(version));
+  write(io,&comment,sizeof(comment));
+  write(io,&dimension,sizeof(dimension));
+  write(io,&nSites,sizeof(nSites));
+  write(io,&nq,sizeof(nq));
+  write(io,vs,nq*nSites*3*sizeof(EigenValue));
   close(io);
 }
 
@@ -149,6 +158,16 @@ static inline void eigenfreqWrite(char* fn,int nv,EigenValue* vs,
 static inline void eigenvectorWrite(char* fn,int nq,int nSites,
                                     EigenVector* es) {
   int io=open(fn,O_TRUNC|O_CREAT|O_WRONLY,0644);
+  char title[64] = "Polarizations";
+  int version = 1;
+  char comment[1024] = "Polarization vectors from a BvK simulation.";
+  int dimension = 3;
+  write(io,&title,sizeof(title));
+  write(io,&version,sizeof(version));
+  write(io,&comment,sizeof(comment));
+  write(io,&dimension,sizeof(dimension));
+  write(io,&nSites,sizeof(nSites));
+  write(io,&nq,sizeof(nq));
   write(io,es,sizeof(EigenVector)*nq*3*nSites*nSites);
   close(io);
 }

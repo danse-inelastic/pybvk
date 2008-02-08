@@ -7,7 +7,7 @@ rm -f system
 ( cd input-generators/syspy ; ./$1 ; cp system ../.. ; rm -f system )
 
 # (rsh n00 killall h ; true)
-rsh -. n00 "mk ; ./h"
+rsh -. n02 "mk ; ./h"
 
 #cp system 1
 #cp system 2

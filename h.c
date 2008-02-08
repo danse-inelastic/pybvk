@@ -25,9 +25,9 @@ int main() {
 //  EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
 
   qpointWrite("qs",nq,qs);
-  eigenvalueWrite("eigval",nv,vs);
+  eigenvalueWrite("Omega2",nq,system->c->sites,vs);
   eigenfreqWrite("freqs",nv,vs,dosScale);
-//  eigenvectorWrite("eigvec",nq,system->c->sites,es);
+////  eigenvectorWrite("Polarizations",nq,system->c->sites,es);
 
   int nBins;
   double wMin;

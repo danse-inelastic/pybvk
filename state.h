@@ -10,18 +10,42 @@ typedef struct {
 
 static inline QPoint* qpointRead(char* fn,int* pnq) {
   int nq;
+  char title[64]; 
+  int version;
+  char comment[1024];
+  int dimension;
   QPoint* qs=NULL;
   {
     int io=open(fn,O_RDONLY);
+    read(io,&title,sizeof(title));
+    // if(nq==0) {
+    //   printf("ERROR: WeightedQ file has no title?\n");
+    //   abort();
+    // }
+    read(io,&version,sizeof(version));
+    if(version!=1) {
+      printf("ERROR: WeightedQ file is not version 1.\n");
+      abort();
+    }
+    read(io,&comment,sizeof(comment));
+    // if(nq==0) {
+    //   printf("ERROR: WeightedQ file has no comment?\n");
+    //   abort();
+    // }
+    read(io,&dimension,sizeof(dimension));
+    if(dimension!=3) {
+      printf("ERROR: WeightedQ file is not 3 dimensional.\n");
+      abort();
+    }
     read(io,&nq,sizeof(nq));
     if(nq==0) {
-      printf("ERROR: qs file says zero qs?\n");
+      printf("ERROR: WeightedQ file says zero Qs?\n");
       abort();
     }
     qs=(QPoint*)malloc(sizeof(QPoint)*nq);
     int ntr=sizeof(QPoint)*nq;
     if(read(io,qs,ntr)!=ntr) {
-      printf("Read qs incomplete\n");
+      printf("Read WeightedQs incomplete\n");
       abort();
     }
     close(io);
@@ -121,6 +145,14 @@ static inline void dosWrite(char* fn,int nbins,int* bins,double wMin,
 
 static inline void qpointWrite(char* fn,int nq,QPoint* qs) {
   int io=open(fn,O_TRUNC|O_CREAT|O_WRONLY,0644);
+  char title[64] = "WeightedQ";
+  int version = 1;
+  char comment[1024] = "WeightedQ from a BvK simulation.";
+  int dimension = 3;
+  write(io,&title,sizeof(title));
+  write(io,&version,sizeof(version));
+  write(io,&comment,sizeof(comment));
+  write(io,&dimension,sizeof(dimension));
   write(io,&nq,sizeof(nq));
   write(io,qs,nq*sizeof(QPoint));
   close(io);

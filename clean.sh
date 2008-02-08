@@ -3,4 +3,4 @@
 rm ./input-generators/syspy/*.pyc
 rm *.o
 rm h
-rm system qs dos Omega2 freqs
+rm system WeightedQ dos Omega2 freqs

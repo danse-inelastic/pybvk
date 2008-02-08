@@ -16,15 +16,15 @@ int main() {
   systemComputeBonds(system);
 
   int nq;
-  QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
-//  QPoint* qs=qpointRead("qs",&nq);
+//  QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
+  QPoint* qs=qpointRead("WeightedQ",&nq);
   printf("%d Q points\n",nq);
 
   EigenValue* vs;
   int nv=bvkCompute(system,nq,qs,&vs,NULL);
 //  EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
 
-  qpointWrite("qs",nq,qs);
+  qpointWrite("WeightedQ",nq,qs);
   eigenvalueWrite("Omega2",nq,system->c->sites,vs);
   eigenfreqWrite("freqs",nv,vs,dosScale);
 ////  eigenvectorWrite("Polarizations",nq,system->c->sites,es);

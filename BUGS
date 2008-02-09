@@ -1,0 +1,25 @@
+
+There is something wrong with tolerance checks!  They depend on the lattice 
+parameter.  Oh Nos!
+
+grep TOL *:
+  system.c:        int ia=floor(image.x+TOL);
+  system.c:        int ib=floor(image.y+TOL);
+  system.c:        int ic=floor(image.z+TOL);
+  system.c:        if(image.x+TOL<0 || image.x-TOL>1 ||
+  system.c:           image.y+TOL<0 || image.y-TOL>1 ||
+  system.c:           image.z+TOL<0 || image.z-TOL>1) {
+  vector.h:static const double TOL=1e-8;
+  vector.h:  //   return a->x-b->x<TOL && a->x-b->x>-TOL &&
+  vector.h:  //          a->y-b->y<TOL && a->y-b->y>-TOL &&
+  vector.h:  //          a->z-b->z<TOL && a->z-b->z>-TOL;
+  vector.h:  return dx*dx+dy*dy+dz*dz<TOL;      // Rigorously, something like <3*TOL*TOL
+
+grep CRAP *:
+  system.c:          printf("CRAP! Shifted sbondv is not in cell.  In cell coords:\n");
+  system.c:              printf("CRAP: image maps to more than one site!\n");
+  system.c:          printf("CRAP: image doesn't map to a site!\n");
+
+grep POO *:
+  bvk.c:    fprintf(stderr,"POO: wmin <0 -- negative eigenvalues not allowed\n");
+  state.h:  for(int i=0;i<nv;i++) vc[i].v=sqrt(vs[i].v)*scale; // XXX: POO makes sqrt safe

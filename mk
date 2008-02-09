@@ -10,3 +10,6 @@ $CC -c system.c
 $CC -c bvk.c
 $CC -c h.c
 gcc -o h h.o bvk.o system.o -L${ACML}/lib -lacml -lg2c -lm
+
+$CC -c pd.c
+gcc -o pd pd.o bvk.o system.o -L${ACML}/lib -lacml -lg2c -lm

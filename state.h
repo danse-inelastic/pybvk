@@ -86,10 +86,48 @@ typedef struct {
   doublecomplex x,y,z;
 } EigenVector; // XXX: Should really be called PolarizationVector
 
-static inline EigenValue* eigenvalueRead(char* fn,int n) {
+static inline EigenValue* eigenvalueRead(char* fn) {
+// static inline EigenValue* eigenvalueRead(char* fn,int n) {
+  int nq;
+  char title[64]; 
+  int version;
+  char comment[1024];
+  int dimension;
+  int nSites;
+    int io=open(fn,O_RDONLY);
+    read(io,&title,sizeof(title));
+    // if(nq==0) {
+    //   printf("ERROR: Polarizations file has no title?\n");
+    //   abort();
+    // }
+    read(io,&version,sizeof(version));
+    if(version!=1) {
+      printf("ERROR: Polarizations file is not version 1.\n");
+      abort();
+    }
+    read(io,&comment,sizeof(comment));
+    // if(version!=1) {
+    //   printf("ERROR: Polarizations file has no comment?\n");
+    //   abort();
+    // }
+    read(io,&dimension,sizeof(dimension));
+    if(dimension!=3) {
+      printf("ERROR: Polarizations file is not of dimension 3.\n");
+      abort();
+    }
+    read(io,&nSites,sizeof(nSites));
+    // if(nSites!=3) {
+    //   printf("ERROR: Polarizations file has wrong number of sites.\n");
+    //   abort();
+    // }
+    read(io,&nq,sizeof(nq));
+    // if(nq!=3) {
+    //   printf("ERROR: Polarizations file has wrong number of qs.\n");
+    //   abort();
+    // }
+  int n=nq*nSites*dimension;
   EigenValue* eigValues=(EigenValue*)malloc(sizeof(EigenValue)*n);
   {
-    int io=open(fn,O_RDONLY);
     int ntr=sizeof(double)*n;
     if(read(io,eigValues,ntr)!=ntr) {
       printf("Read eigvals incomplete\n");
@@ -101,15 +139,54 @@ static inline EigenValue* eigenvalueRead(char* fn,int n) {
   return eigValues;
 }
 
-static inline EigenVector* eigenvectorRead(char* fn,int vlen,int nv) {
-  long btr=sizeof(doublecomplex)*vlen*(vlen*nv);
-  EigenVector* eigVectors=(EigenVector*)malloc(btr);
+static inline EigenVector* eigenvectorRead(char* fn) {
+//static inline EigenVector* eigenvectorRead(char* fn,int vlen,int nv) {
+//  long btr=sizeof(doublecomplex)*vlen*(vlen*nv);
+//  EigenVector* eigVectors=(EigenVector*)malloc(btr);
+  int nq;
+  char title[64]; 
+  int version;
+  char comment[1024];
+  int dimension;
+  int nSites;
   int io=open(fn,O_RDONLY);
   if(io<0) {
     fprintf(stderr,"ERROR: Can't open %s",fn);
     perror("");
     abort();
   }
+    read(io,&title,sizeof(title));
+    // if(nq==0) {
+    //   printf("ERROR: Polarizations file has no title?\n");
+    //   abort();
+    // }
+    read(io,&version,sizeof(version));
+    if(version!=1) {
+      printf("ERROR: Polarizations file is not version 1.\n");
+      abort();
+    }
+    read(io,&comment,sizeof(comment));
+    // if(version!=1) {
+    //   printf("ERROR: Polarizations file has no comment?\n");
+    //   abort();
+    // }
+    read(io,&dimension,sizeof(dimension));
+    if(dimension!=3) {
+      printf("ERROR: Polarizations file is not of dimension 3.\n");
+      abort();
+    }
+    read(io,&nSites,sizeof(nSites));
+    // if(nSites!=3) {
+    //   printf("ERROR: Polarizations file has wrong number of sites.\n");
+    //   abort();
+    // }
+    read(io,&nq,sizeof(nq));
+    // if(nq!=3) {
+    //   printf("ERROR: Polarizations file has wrong number of qs.\n");
+    //   abort();
+    // }
+  long btr=sizeof(doublecomplex)*nq*nSites*dimension*nSites*dimension;
+  EigenVector* eigVectors=(EigenVector*)malloc(btr);
   long r=read(io,eigVectors,btr);
   if(r!=btr) {
     printf("ERROR: Read eigvecs incomplete: %ld of %ld\n",r,btr);
@@ -117,7 +194,8 @@ static inline EigenVector* eigenvectorRead(char* fn,int vlen,int nv) {
     abort();
   }
   close(io);
-  printf("Eigenvectors: %d vecs each length %d\n",vlen*nv,vlen);
+  printf("Polarizations: %d vecs each length %d\n",
+                                        nq*nSites*nSites*dimension,dimension);
   return eigVectors;
 }
 

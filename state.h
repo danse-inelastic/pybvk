@@ -86,6 +86,11 @@ typedef struct {
   doublecomplex x,y,z;
 } EigenVector; // XXX: Should really be called PolarizationVector
 
+static inline double EigenVectorMag2(EigenVector* e){
+  return e->x.real*e->x.real + e->y.real*e->y.real + e->z.real*e->z.real
+         - e->x.imag*e->x.imag - e->y.imag*e->y.imag - e->z.imag*e->z.imag;
+}
+
 static inline EigenValue* eigenvalueRead(char* fn) {
 // static inline EigenValue* eigenvalueRead(char* fn,int n) {
   int nq;

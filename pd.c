@@ -31,8 +31,8 @@ int main() {
    if( om2s[f].v > maxFreq ){ maxFreq = om2s[f].v; }
   }
 
-  double* sums=(double*)malloc(sizeof(double)*dim);
-  for(int i=0;i<dim;i++){ sums[i] = 0.0; }
+  double* sums=(double*)malloc(sizeof(double)*nSites);
+  for(int i=0;i<nSites;i++){ sums[i] = 0.0; }
 
   int nBins=(int)(maxFreq/dBin)+10;
   double* bins=(double*)malloc(sizeof(double)*nBins*nSites);

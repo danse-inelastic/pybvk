@@ -2,5 +2,5 @@
 
 rm ./input-generators/syspy/*.pyc
 rm *.o
-rm h
-rm system WeightedQ dos freqs Polarizations Omega2
+rm h pd
+rm system WeightedQ dos freqs Polarizations Omega2 DOS*

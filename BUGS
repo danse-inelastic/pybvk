@@ -1,4 +1,9 @@
 
+Possibly because of the tolerance checks bug, the following bugs also exist:
+  - DOS are output in THz, not Hz or J
+  - Qs are in inverse angstroms, not 1/m (b/c the lattice parameters are in
+      Angstroms instead of m)
+
 There is something wrong with tolerance checks!  They depend on the lattice 
 parameter.  Oh Nos!
 

@@ -5,7 +5,7 @@
 #include "state.h"
 #include "bvk.h"
 
-const double dosScale=1.0/(2*M_PI*1e12);
+const double dosScale=1.0/(2*M_PI*1e12); // THz
 const double dBin=0.05;
 
 int main() {
@@ -58,11 +58,29 @@ int main() {
     }
   }
 
+  for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
+      bins[nBins*s + b] /= sums[s]*dBin;
+  }}
+
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);
-  for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
-    printf("%lf %lf\n",b*dBin,bins[nBins*s + b]/sums[s]/dBin);
-  }}
+  for(int s=0;s<nSites;s++){ 
+    char filename[8]; 
+    sprintf(filename,"DOS.%d",s);
+    int io=open(filename,O_TRUNC|O_CREAT|O_WRONLY,0644);
+    char title[64] = "DOS";
+    int version = 1;
+    char comment[1024] = "DOS from a BvK simulation.";
+    write(io,&title,sizeof(title));
+    write(io,&version,sizeof(version));
+    write(io,&comment,sizeof(comment));
+    write(io,&nBins,sizeof(nBins));
+    write(io,&dBin,sizeof(dBin));
+    write(io,&bins[s*nBins],nBins*sizeof(double));
+//    for(int b=0;b<nBins;b++)
+//      printf("%lf %lf\n",b*dBin,bins[nBins*s + b]/sums[s]/dBin);
+    close(io);
+  }
 
   printf("Ssee program? iss kap\\\"ut.\n");
 }

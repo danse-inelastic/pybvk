@@ -44,13 +44,13 @@ int main() {
   for(int q=0;q<nq;q++){
     for(int sd=0;sd<nSites*dim;sd++){
       val=om2s[nSites*dim*q+sd].v;
+      val+=dBin/2.0;
       for(int s=0;s<nSites;s++){
         index = nSites*dim*nSites*q + nSites*sd + s;
         weight = EigenVectorMag2(&pols[index]);
 //        assert(val>0,"value must be >0");
 //        int bin=(int)(val/dBin);  // bin 0 has values [0..dBin)
 //                                  // bin N has values [N*dBin..(N+1)*dBin)
-        val+=dBin/2.0;
         int bin=(int)(val/dBin); // bin2 0 has values [-0.5*dBin..0.5*dBin)
         bins[ nBins*s + bin ] += weight;
         sums[s] += weight;
@@ -77,8 +77,6 @@ int main() {
     write(io,&nBins,sizeof(nBins));
     write(io,&dBin,sizeof(dBin));
     write(io,&bins[s*nBins],nBins*sizeof(double));
-//    for(int b=0;b<nBins;b++)
-//      printf("%lf %lf\n",b*dBin,bins[nBins*s + b]/sums[s]/dBin);
     close(io);
   }
 

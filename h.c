@@ -16,7 +16,7 @@ int main() {
   systemComputeBonds(system);
 
   int nq;
-  QPoint* qs=qpointGenRegularInRCell(system,&nq,40);
+  QPoint* qs=qpointGenRegularInRCell(system,&nq,20);
 //  QPoint* qs=qpointRead("WeightedQ",&nq);
   printf("%d Q points\n",nq);
 

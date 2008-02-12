@@ -41,7 +41,8 @@ B) Building
   2) elsewhere, edit the file "mk" appropriately.  Namely, you will need to 
       point at the appropriate version of lapack.
 
-  3) acml functions used: 
+  3) acml functions and structs used: 
+     - doublecomplex
      - fastexp(double t)
      - fastcos(double t)
      - fastsincos(double t, double* sin, double* cos)

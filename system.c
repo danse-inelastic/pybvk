@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "system.h"
 #include "dinaw.h"
+#include <acml.h>
 
 static int _computeBonds(System* system) {
   int result=0;

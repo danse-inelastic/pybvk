@@ -1,15 +1,22 @@
 #include <sys/time.h>
 #include <stdio.h>
-#include <acml.h>
 #include <values.h>
 #include <math.h>
 #include "system.h"
 #include "state.h"
 #include "vector.h"
 
-extern void fastsincos(double t,double* sin,double* cos);
-extern double fastcos(double t);
-extern double fastexp(double x);
+#ifdef __amd64__
+  #include <acml.h>
+  extern void fastsincos(double t,double* sin,double* cos);
+  extern double fastcos(double t);
+  extern double fastexp(double x);
+#else
+  #include "mylapack.h"
+//extern void fastsincos(double t,double* sin,double* cos);
+//extern double fastcos(double t);
+//extern double fastexp(double x);
+#endif // __amd64__
 
 static const double hbar=1.0545716e-34;                     // kg*m^2
 static const double kB=1.3806503e-23;                       // kg*m^2

@@ -1,7 +1,11 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <acml.h>
+#ifdef __amd64__
+  #include <acml.h>
+#else
+  #include "mylapack.h"
+#endif // __amd64__
 
 typedef struct {
   Vector v;

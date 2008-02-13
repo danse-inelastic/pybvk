@@ -3,7 +3,12 @@
 #include "vector.h"
 #include "system.h"
 #include "dinaw.h"
-#include <acml.h>
+
+#ifdef __amd64__
+  #include <acml.h>
+#else
+  #include "mylapack.h"
+#endif // __amd64__
 
 static int _computeBonds(System* system) {
   int result=0;

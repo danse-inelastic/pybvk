@@ -1,7 +1,11 @@
 #ifndef DINAW_H
 #define DINAW_H
 
-#include <acml.h>
+#ifdef __amd64__
+  #include <acml.h>
+#else
+  #include "mylapack.h"
+#endif // __amd64__
 
 typedef struct {
   int n;

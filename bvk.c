@@ -8,15 +8,16 @@
 
 #ifdef __amd64__
   #include <acml.h>
-  extern void fastsincos(double t,double* sin,double* cos);
-  extern double fastcos(double t);
-  extern double fastexp(double x);
 #else
   #include "mylapack.h"
-//extern void fastsincos(double t,double* sin,double* cos);
-//extern double fastcos(double t);
-//extern double fastexp(double x);
+  #define fastsincos sincos
+  #define fastcos cos
+  #define fastexp exp
 #endif // __amd64__
+
+extern void fastsincos(double t,double* sin,double* cos);
+extern double fastcos(double t);
+extern double fastexp(double x);
 
 static const double hbar=1.0545716e-34;                     // kg*m^2
 static const double kB=1.3806503e-23;                       // kg*m^2

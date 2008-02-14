@@ -1,3 +1,5 @@
+Why does the binner crash if you have a small binwidth and a small number of
+qpoints?
 
 Possibly because of the tolerance checks bug, the following bugs also exist:
   - DOS are output in THz, not Hz or J

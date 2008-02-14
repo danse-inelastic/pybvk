@@ -61,7 +61,29 @@ static inline QPoint* qpointRead(char* fn,int* pnq) {
 
 // XXX: If you ever read qs, remember your generators might need fixing to
 //      scale the q vectors by 2Pi
+// XXX: These weights are probably wrong.
+static inline QPoint* qpointGenRegularInRCell(System* system,int* pnq,int n) {
+  *pnq=n*n*n;
+  Cell* rcell=&system->rcell;
+  QPoint* qs=(QPoint*)malloc(*pnq*sizeof(QPoint));
+  QPoint* qc=qs;
+  for(int x=0;x<n;x++)
+    for(int y=0;y<n;y++)
+      for(int z=0;z<n;z++) {
+        double a=(double)(x+1)/(double)(n+1);
+        double b=(double)(y+1)/(double)(n+1);
+        double c=(double)(z+1)/(double)(n+1);
+        qc->v.x=rcell->a.x*a+rcell->b.x*b+rcell->c.x*c;
+        qc->v.y=rcell->a.y*a+rcell->b.y*b+rcell->c.y*c;
+        qc->v.z=rcell->a.z*a+rcell->b.z*b+rcell->c.z*c;
+        qc->weight=1;
+        qc++;
+      }
+  return qs;
+}
 
+// XXX: If you ever read qs, remember your generators might need fixing to
+//      scale the q vectors by 2Pi
 static inline QPoint* qpointGenRandomInRCell(System* system,int* pnq,int n) {
   *pnq=n*n*n;
   Cell* rcell=&system->rcell;

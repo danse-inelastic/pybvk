@@ -10,7 +10,10 @@ rm -f system
 # ( cd input-generators/qs/directionalQs; ./mk; ./h; mv WeightedQ ../../../ ) 
 
 ./mk
+
 ./randomQs $3
+# ./regularQs $3
+
 ./h $2
 ./pd $2 $4
 

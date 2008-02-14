@@ -52,12 +52,16 @@ B) Input configuration
        a) in the main directory, you may run:
           $ randomQs N
           with N integer, which will generate N^3 random Qs in the IBZ.
-       b) in input-generators/qs/cubicMPGrid type:
+       b) also in the main directory, you may run:
+          $ regularQs N
+          with N integer, which will generate N^3 regularly spaced Qs in the 
+          IBZ.
+       c) in input-generators/qs/cubicMPGrid type:
           $ make
           $ h N
           where the integer N gives the cube root of the number of Qs to be 
           generated and `cropped' by symmetries.
-       c) in input-generators/qs/directionalQs, edit the file h.c to pick out
+       d) in input-generators/qs/directionalQs, edit the file h.c to pick out
           the direction you want -- there are some examples -- then type:
           $ mk
           $ h
@@ -83,4 +87,5 @@ C) Running, from the `root' directory.
      system is in place as ./input-generators/syspy/mySystem ):
      $ a mySystem Vecs N df
      where Vecs, N, and df have the same meanings as given above.
+     (you can also easily edit "a" to use regularly gridded Qs.)
    

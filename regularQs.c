@@ -14,7 +14,7 @@ int main(int argc,char *argv[]) {
   System* system=systemRead("system");
 
   int nq;
-  QPoint* qs=qpointGenRandomInRCell(system,&nq,N);
+  QPoint* qs=qpointGenRegularInRCell(system,&nq,N);
   printf("%d Q points\n",nq);
 
   qpointWrite("WeightedQ",nq,qs);

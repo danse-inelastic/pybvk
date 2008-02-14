@@ -17,3 +17,6 @@ gcc -o pd pd.o bvk.o system.o -L${ACML}/lib -lacml -lg2c -lm
 
 $CC -c randomQs.c
 gcc -o randomQs randomQs.o bvk.o system.o -L${ACML}/lib -lacml -lg2c -lm
+
+$CC -c regularQs.c
+gcc -o regularQs regularQs.o bvk.o system.o -L${ACML}/lib -lacml -lg2c -lm

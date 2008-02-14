@@ -1,4 +1,4 @@
-A) Pre-build configuration
+A) Pre-build configuration: editing h.c (and maybe pd.c)
    1) Q-points
       - For NxNxN regularly gridded points throughout the IBZ, edit line 19:
         -------------------------------------------------------------------
@@ -29,6 +29,7 @@ A) Pre-build configuration
       -------------------------------------------------------------------
 
    3) To change the resolution of the ouput phonon DOS, edit line 9:
+      (line 9 in pd.c too.)
       -------------------------------------------------------------------
       const double dosRes=0.011;
       -------------------------------------------------------------------
@@ -105,3 +106,4 @@ D) Running, from the `root' directory.
      $ rsh -. n## h
      where the ## represents the numbers for your node of choice.
 
+  3) pd

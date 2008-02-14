@@ -26,23 +26,33 @@ int main(int argc,char *argv[]){
     if(digits == 3){ w[q] *= 6; }
     if(digits == 2){ w[q] *= 3; }
   }
-  double div = 2.0*(N+1) / 2.0 / M_PI;
+  double mul = 2.0*M_PI / 2.0 / (double)(N+1) ;
 
-  int io=open("qs",O_CREAT|O_TRUNC|O_WRONLY,0644);
 
-  int anInt=(int)Q.size(); write(io,&anInt,sizeof(anInt));
+  int io=open("WeightedQ",O_CREAT|O_TRUNC|O_WRONLY,0644);
+  int anInt=(int)Q.size(); 
 
   if(sizeof(anInt)!=4) {
     printf("sizeof(int) is wrong!\n");
     exit(2);
   }
 
+  char title[64] = "WeightedQ";
+  char comment[1024];
+  sprintf(comment, "%d Qs on Monkhorst-Pack grid", anInt);
+  int version = 1;
+  int dimension = 3;
+  write(io,&title,sizeof(title));
+  write(io,&version,sizeof(version));
+  write(io,&comment,sizeof(comment));
+  write(io,&dimension,sizeof(dimension));
+  write(io,&anInt,sizeof(anInt));
   for(int q=0;q<(int)Q.size();q++){ 
-    printf("%lf %lf %lf %d\n", Q[q].x/div,Q[q].y/div,Q[q].z/div,w[q]);
+    printf("%lf %lf %lf %d\n", Q[q].x*mul,Q[q].y*mul,Q[q].z*mul,w[q]);
     double dbl;
-    dbl=Q[q].x/div; write(io,&dbl,sizeof(double));
-    dbl=Q[q].y/div; write(io,&dbl,sizeof(double));
-    dbl=Q[q].z/div; write(io,&dbl,sizeof(double));
+    dbl=Q[q].x*mul; write(io,&dbl,sizeof(double));
+    dbl=Q[q].y*mul; write(io,&dbl,sizeof(double));
+    dbl=Q[q].z*mul; write(io,&dbl,sizeof(double));
     dbl=w[q];       write(io,&dbl,sizeof(double));
   }
   close(io);

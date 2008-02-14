@@ -3,23 +3,16 @@
 set -e
 
 rm -f system
-# ( cd input-generators/sysperl ; ./$1 ; cp system ../.. ; rm -f system )
-( cd input-generators/syspy ; ./$1 ; cp system ../.. ; rm -f system )
 
-# (rsh n00 killall h ; true)
-rsh -. n02 "mk ; ./h"
+( cd input-generators/syspy ; ./$1 ; mv system ../.. ; cd ../.. )
 
-#cp system 1
-#cp system 2
-#cp system 3
-#cp system 4
-#
-## There is an NFS race here; run the h too fast on one of the compute nodes
-## and you might get the previous version of h from before the 'mk'.  So run
-## the both on the same node.
-#(rsh n00 killall h ; true)
-#rsh -. n00 mk
-#rsh -. n00 'cd 1 ; ../h > out 2>&1' &
-##rsh -. n00 'cd 2 ; ../h > out 2>&1' &
-##rsh -. n00 'cd 3 ; ../h > out 2>&1' &
-##rsh -. n00 'cd 4 ; ../h > out 2>&1' &
+# ( cd input-generators/qs/cubicMPGrid; ./h $2 > out; mv WeightedQ ../../../ ) 
+# ( cd input-generators/qs/directionalQs; ./mk; ./h; mv WeightedQ ../../../ ) 
+# ( cd input-generators/qs/randomQs; ./mk; ./h; mv WeightedQ ../../../ ) 
+
+./mk
+./randomQs $2
+./h 1
+./pd
+
+./g.py DOS*

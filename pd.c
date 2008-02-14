@@ -44,11 +44,11 @@ int main() {
   for(int q=0;q<nq;q++){
     for(int sd=0;sd<nSites*dim;sd++){
       val=om2s[nSites*dim*q+sd].v;
+//      assert(val>0,"value must be >0");
       val+=dBin/2.0;
       for(int s=0;s<nSites;s++){
         index = nSites*dim*nSites*q + nSites*sd + s;
         weight = EigenVectorMag2(&pols[index]);
-//        assert(val>0,"value must be >0");
 //        int bin=(int)(val/dBin);  // bin 0 has values [0..dBin)
 //                                  // bin N has values [N*dBin..(N+1)*dBin)
         int bin=(int)(val/dBin); // bin2 0 has values [-0.5*dBin..0.5*dBin)

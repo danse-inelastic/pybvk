@@ -8,30 +8,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-//
-//   //NOW OBSOLETE  qs ->
-//   //NOW OBSOLETE    int32 numberOfQs
-//   //NOW OBSOLETE    numberOfQs repetitions of {
-//   //NOW OBSOLETE      double x,y,z
-//   //NOW OBSOLETE      double weight
-//   //NOW OBSOLETE    } qs
-//
-//   weights ->
-//     int32 wedgeType -- one of:
-//       0 -- wedge is monatomic-cubic irreducible wedge:
-//              f0.x + nx*df.x  for nx=0..N.x-1
-//                f0.y + ny*df.y  for ny=nx..N.y-1
-//                  f0.z + nz*df.z  for nz=ny..N.z-1
-//            where { f0.x + nx*df.x } for nx=-(N.x-1)..(N.x-1) should evenly
-//            divide (periodic) -PI..PI.
-//            That is, df.x*(N.x)-2*PI == df.x*-(N.x-1)
-//     Vector f0 (double,double,double)
-//     Vector df (double,double,double)
-//     Vector N (int,int,int)
-//     double weight0
-//     double weight1
-//     ...
-
 #define DIE(c,m) if(c) { perror(m); abort(); }
 
 typedef struct {
@@ -85,7 +61,7 @@ int main() {
 //------------------------------------------------------
 //  USER INPUT:  cube root of number of Q
 //------------------------------------------------------
-  int nnn=100;
+  int nnn=30;
 //============================================================================
 
   cellReciprocal(&rCell,&cell);
@@ -101,9 +77,6 @@ int main() {
         qc->v.x=rCell.a.x*a+rCell.b.x*b+rCell.c.x*c;
         qc->v.y=rCell.a.y*a+rCell.b.y*b+rCell.c.y*c;
         qc->v.z=rCell.a.z*a+rCell.b.z*b+rCell.c.z*c;
-//        qc->v.x=(a-0.5)*1000000000;
-//        qc->v.y=(b-0.5)*1000000000;
-//        qc->v.z=(c-0.5)*1000000000;
         qc->weight=1;
         qc++;
       }
@@ -111,7 +84,16 @@ int main() {
   printf("%d Q points\n",nq);
 
   {
-    int io=open("qs",O_TRUNC|O_CREAT|O_WRONLY,0644);
+    int io=open("WeightedQ",O_TRUNC|O_CREAT|O_WRONLY,0644);
+    char title[64] = "WeightedQ";
+    char comment[1024];
+    sprintf(comment, "%d random Qs in the IBZ", nq);
+    int version = 1;
+    int dimension = 3;
+    write(io,&title,sizeof(title));
+    write(io,&version,sizeof(version));
+    write(io,&comment,sizeof(comment));
+    write(io,&dimension,sizeof(dimension));
     write(io,&nq,sizeof(nq));
     write(io,qs,sizeof(QPoint)*nq);
     close(io);

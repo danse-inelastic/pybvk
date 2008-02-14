@@ -210,7 +210,14 @@ int bvkCompute(System* system,int nq,QPoint* qs,
     memset(&v,0,sizeof(double)*d.n);
     int info=-1;
     // Fill array in C order in upper triangle and call with 'L' and it works
-    zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
+    #ifdef __amd64__
+      zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
+    #else
+      int lwork = 2*d.n;
+      doublecomplex* work[lwork];
+      double rwork[lwork];
+      zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&work[0],&lwork,&rwork[0],&info);
+    #endif // __amd64__
     if(info!=0) { printf("zheev failed\n"); abort(); }
 
     // Save the eigenvalues and eigenvectors in eig for later writing

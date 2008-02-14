@@ -1,5 +1,0 @@
-#!/bin/sh
-
-set -e
-
-gcc -std=gnu99 -fgnu89-inline -Wall -O3 -o h h.c

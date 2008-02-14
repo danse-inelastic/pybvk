@@ -95,8 +95,7 @@ static inline double EigenVectorMag2(EigenVector* e){
          + e->x.imag*e->x.imag + e->y.imag*e->y.imag + e->z.imag*e->z.imag;
 }
 
-static inline EigenValue* eigenvalueRead(char* fn) {
-// static inline EigenValue* eigenvalueRead(char* fn,int n) {
+static inline EigenValue* eigenvalueRead(char* fn,int* pnq) {
   int nq;
   char title[64]; 
   int version;
@@ -129,7 +128,7 @@ static inline EigenValue* eigenvalueRead(char* fn) {
     //   printf("ERROR: Polarizations file has wrong number of sites.\n");
     //   abort();
     // }
-    read(io,&nq,sizeof(nq));
+    read(io,&nq,sizeof(int));
     // if(nq!=3) {
     //   printf("ERROR: Polarizations file has wrong number of qs.\n");
     //   abort();
@@ -144,6 +143,7 @@ static inline EigenValue* eigenvalueRead(char* fn) {
     }
     close(io);
   }
+  *pnq = nq;
   printf("Eigenvalues: %d vals\n",n);
   return eigValues;
 }

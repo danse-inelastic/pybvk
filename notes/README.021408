@@ -1,0 +1,109 @@
+A) Pre-build configuration: editing h.c (and maybe pd.c)
+   1) Q-points
+      - For NxNxN regularly gridded points throughout the IBZ, edit line 19:
+        -------------------------------------------------------------------
+        QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
+        -------------------------------------------------------------------
+        Here, N=80.
+
+      - To read from a c-binary file labelled "qs", comment out line 19 and
+        uncomment line 20 of "h.c"
+        -------------------------------------------------------------------
+          QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
+        //  QPoint* qs=qpointRead("qs",&nq);
+        --- becomes -------------------------------------------------------
+        //  QPoint* qs=qpointGenRegularInRCell(system,&nq,80);
+          QPoint* qs=qpointRead("qs",&nq);
+        -------------------------------------------------------------------
+
+   2) To generate and output eigenvectors as well as eigenvalues uncomment 
+      lines 25 and 30 of "h.c"
+      -------------------------------------------------------------------
+      //  EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
+        ...
+      //  eigenvectorWrite("eigvec",nq,system->c->sites,es);
+      --- becomes -------------------------------------------------------
+        EigenVector* es; int nv=bvkCompute(system,nq,qs,&vs,&es);
+        ...
+        eigenvectorWrite("eigvec",nq,system->c->sites,es);
+      -------------------------------------------------------------------
+
+   3) To change the resolution of the ouput phonon DOS, edit line 9:
+      (line 9 in pd.c too.)
+      -------------------------------------------------------------------
+      const double dosRes=0.011;
+      -------------------------------------------------------------------
+      Here, the resolution is 0.011 THz
+
+B) Building
+  1) on upgrayedd
+     $ mk
+
+  2) elsewhere, edit the file "mk" appropriately.  Namely, you will need to 
+      point at the appropriate version of lapack.
+
+  3) acml functions and structs used: 
+     - doublecomplex
+     - fastexp(double t)
+     - fastcos(double t)
+     - fastsincos(double t, double* sin, double* cos)
+
+  4) lapack functions used:
+     - zheev  (with acml call signature) 
+
+C) Input configuration
+  1) Symmetries, in input-generators/syms/
+     - Cubic, Face-centered-tetragonal, and Hexagonal symmetries are already
+       generated for you.
+
+     - Otherwise, in getSyms, edit around line 99-116, such that the 
+       appropriate generating symmetries.  Then:
+
+       $ getSyms.py
+       $ pkl2Syms.py
+
+       Which should produce a c-binary file "syms" with the group elements 
+       forming the closure of the elements you added into getSyms.py. 
+  
+  2) System, in input-generators/syspy  (sysperl, if you prefer perl to python)
+     - There are quite a few examples, ready to go:
+       Al, Ce, Ho, In, Ni, NiAl, Sc, Tb, Zr
+       If you want to use one of these, say "Al", do:
+       $ Al
+       This will generate the c-binary file "system" which is input to the BvK
+       code. 
+
+    - If you wish to generate a different system, use one of the existing ones
+      as a template.  If you needed to generate your own "syms" file, copy it
+      over: 
+      $ cp ../syms/syms ./syms/mySyms
+      and refer to it appropriately in your call to System.write at the bottom
+      of your new system file.
+
+   - Either way, copy the system file into the `root' directory.
+     $ cp system ../../
+
+  3) qs -- Optional
+     - There are some codes for generating qs in input-generators/qs, but these
+       are somewhat undevelopped.  The important point is the format for the
+       c-binary.  The file should contain an integer N, which is the number of
+       Q-points, and then a large list of quadruples-of-doubles, as follows:
+       -------------------------------------------------------------------
+       N
+       Qx_0 Qy_0 Qz_0 w_0
+       Qx_1 Qy_1 Qz_1 w_1
+       ...
+       Qx_N Qy_N Qz_N w_N
+       -------------------------------------------------------------------
+       The line breaks are just for easy reading, as the "qs" file is actually 
+       c-binary.
+    - Once you've generated the file "qs", copy it to the `root' directory.
+
+D) Running, from the `root' directory.
+  1) Anywhere:
+     $ h
+  2) On upgrayedd: 
+     $ rsh -. n## h
+     where the ## represents the numbers for your node of choice.
+
+  3) pd

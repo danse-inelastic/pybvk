@@ -6,13 +6,12 @@ rm -f system
 
 ( cd input-generators/syspy ; ./$1 ; mv system ../.. ; cd ../.. )
 
-# ( cd input-generators/qs/cubicMPGrid; ./h $2 > out; mv WeightedQ ../../../ ) 
+# ( cd input-generators/qs/cubicMPGrid; ./h $3 > out; mv WeightedQ ../../../ ) 
 # ( cd input-generators/qs/directionalQs; ./mk; ./h; mv WeightedQ ../../../ ) 
-# ( cd input-generators/qs/randomQs; ./mk; ./h; mv WeightedQ ../../../ ) 
 
 ./mk
-./randomQs $2
-./h 1
-./pd
+./randomQs $3
+./h $2
+./pd $2 $4
 
 ./g.py DOS*

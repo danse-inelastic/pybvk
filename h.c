@@ -5,9 +5,6 @@
 #include "state.h"
 #include "bvk.h"
 
-const double dosScale=1.0/(2*M_PI*1e12);
-const double dosRes=0.01;
-
 int main(int argc,char *argv[]) {
   setvbuf(stdout,NULL,_IONBF,0);
   srand48(getpid()*234597574378);

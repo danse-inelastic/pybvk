@@ -129,7 +129,7 @@ double bvkMaxOmega(int nw,EigenValue* ws,double* minOmega) {
     }
   }
   if(wmin<0) {
-    fprintf(stderr,"POO: wmin <0 -- negative eigenvalues not allowed\n");
+    fprintf(stderr,"POO: wmin = %lf <0 -- no negative frequencies\n",wmin);
     abort();
   }
   wmax=sqrt(wmax);

@@ -214,9 +214,14 @@ int bvkCompute(System* system,int nq,QPoint* qs,
       zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
     #else
       int lwork = 2*d.n;
-      doublecomplex* work[lwork];
-      double rwork[lwork];
+      //doublecomplex* work[lwork];
+      doublecomplex* work;
+      work = (doublecomplex *)malloc( lwork* sizeof( doublecomplex ) );
+      //double rwork[lwork];
+      double *rwork;
+      rwork = (double *)malloc( lwork* sizeof( double ) );
       zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&work[0],&lwork,&rwork[0],&info);
+      free( work ); free( rwork );
     #endif // __amd64__
     if(info!=0) { printf("zheev failed\n"); abort(); }
 

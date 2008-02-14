@@ -62,7 +62,7 @@ static inline QPoint* qpointRead(char* fn,int* pnq) {
 // XXX: If you ever read qs, remember your generators might need fixing to
 //      scale the q vectors by 2Pi
 
-static inline QPoint* qpointGenRegularInRCell(System* system,int* pnq,int n) {
+static inline QPoint* qpointGenRandomInRCell(System* system,int* pnq,int n) {
   *pnq=n*n*n;
   Cell* rcell=&system->rcell;
   QPoint* qs=(QPoint*)malloc(*pnq*sizeof(QPoint));
@@ -219,14 +219,15 @@ static inline void eigenvectorDumpAll(EigenValue* v,EigenVector* e,
   }
 }
 
-static inline void dosWrite(char* fn,int nbins,int* bins,double wMin,
-                            double wRes) {
+static inline void dosWrite(char* fn,char* filetype,int version,char* comment,
+                            int nBins, double dBin, double* bins) {
   int io=open(fn,O_TRUNC|O_CREAT|O_WRONLY,0644);
-  for(int i=0;i<nbins;i++) {
-    char buf[512];
-    sprintf(buf,"%lf %lf\n",i*wRes+wMin,(double)bins[i]);
-    write(io,buf,strlen(buf));
-  }
+  write(io,filetype,64*sizeof(char));
+  write(io,&version,sizeof(version));
+  write(io,comment,1024*sizeof(char));
+  write(io,&nBins,sizeof(nBins));
+  write(io,&dBin,sizeof(dBin));
+  write(io,bins,nBins*sizeof(double));
   close(io);
 }
 

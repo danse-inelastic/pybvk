@@ -1,0 +1,26 @@
+
+cubicMPGrid:
+  - It's in c++, make it c.  
+  - Does it really need it's own Vector3.H ?
+
+directionalQs:
+  - Better input -- so it doesn't require recompilation.
+    - Can this utilize the system file, somehow -- so a user can just pick 
+      a direction, and not worry about magnitudes?
+  - Can we use vector from bvk?
+  - We need dispersion output.  Using Omega2 and WeightedQ is ok, but ascii 
+      might be nice here.
+
+randomQs:
+  - Can we 
+.svn/
+h.c
+mk*
+
+NEEDED:
+  - qs on a grid in the IBZ
+
+DESIRED:
+  - MP Grids for arbitrary structure
+  - Other ``magic'' grids.
+  - Grid inside specified volume (Real or reciprocal volume? Both?)

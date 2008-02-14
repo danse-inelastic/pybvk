@@ -6,7 +6,7 @@
 #include "bvk.h"
 
 const double dosScale=1.0/(2*M_PI*1e12); // THz
-const double dBin=0.05;
+const double dBin=0.01;
 
 int main() {
   setvbuf(stdout,NULL,_IONBF,0);
@@ -58,27 +58,25 @@ int main() {
     }
   }
 
+  double* total=(double*)malloc(sizeof(double)*nBins);
   for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
       bins[nBins*s + b] /= sums[s]*dBin;
+      total[b] += bins[nBins*s + b]/(double)nSites;
   }}
 
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);
+  char filename[8]; 
+  char filetype[64] = "DOS";
+  int version = 1;
+  char pcomment[1024] = "partial DOS from a BvK simulation.";
   for(int s=0;s<nSites;s++){ 
-    char filename[8]; 
     sprintf(filename,"DOS.%d",s);
-    int io=open(filename,O_TRUNC|O_CREAT|O_WRONLY,0644);
-    char title[64] = "DOS";
-    int version = 1;
-    char comment[1024] = "DOS from a BvK simulation.";
-    write(io,&title,sizeof(title));
-    write(io,&version,sizeof(version));
-    write(io,&comment,sizeof(comment));
-    write(io,&nBins,sizeof(nBins));
-    write(io,&dBin,sizeof(dBin));
-    write(io,&bins[s*nBins],nBins*sizeof(double));
-    close(io);
+    dosWrite(filename,filetype,version,pcomment,nBins,dBin,&bins[s*nBins]);
   }
+
+  char tcomment[1024] = "total DOS from a BvK simulation.";
+  dosWrite("DOS",filetype,version,tcomment,nBins,dBin,total);
 
   printf("Ssee program? iss kap\\\"ut.\n");
 }

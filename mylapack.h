@@ -12,9 +12,12 @@ extern "C" {
 #endif
 
 int zheev( char *jobz, char *uplo, integer *n,
-        doublecomplex *a, integer *lda, doublecomplex *w,
+        doublecomplex *a, integer *lda, doublereal *w,
         doublecomplex* work, integer *lwork, doublereal *rwork,
         integer *info);
+        //doublecomplex *a, integer *lda, doublecomplex *w,
+        //doublecomplex* work, integer *lwork, doublereal *rwork,
+        //integer *info);
 
 
 #ifdef __cplusplus

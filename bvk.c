@@ -217,14 +217,15 @@ int bvkCompute(System* system,int nq,QPoint* qs,
       if(pes) { bb = 'V';}
       char cc = 'L';
       int dn = d.n;
-      int lwork = 2*d.n;
-      //doublecomplex* work[lwork];
-      doublecomplex* work;
+      int lwork = 2*dn-1;
+      // generate doublecomplex work[lwork]
+      doublecomplex *work;
       work = (doublecomplex *)malloc( lwork* sizeof( doublecomplex ) );
-      //double rwork[lwork];
+      // generate double rwork[lwork]
       double *rwork;
-      rwork = (double *)malloc( lwork* sizeof( double ) );
-      zheev(&bb,&cc,&dn,d.e,&dn,v,&work[0],&lwork,&rwork[0],&info); //FIXME
+      rwork = (double *)malloc( (3*dn-2)*sizeof( double ) );
+      // call to zheev using 'standard' clapack interface
+      zheev(&bb,&cc,&dn,d.e,&dn,v,work,&lwork,rwork,&info);
       free( work ); free( rwork );
     #endif // __amd64__
     if(info!=0) { printf("zheev failed\n"); abort(); }

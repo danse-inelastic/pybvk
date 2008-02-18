@@ -4,7 +4,7 @@ import numpy
 matrix = numpy.matrix
 array  = numpy.array
 
-a = 1.177245   # number to de-normalize bond vectors from integers.
+from user import a
 
 import cPickle as cp
 S  = cp.load(open("S.pkl",'r'))

@@ -1,14 +1,10 @@
 #!/usr/bin/python
 
-a = 1.177245   # number to normalize bond vectors to integers.
-               #   This should be rewritten without this crutch!
-c = -16.021765 # convert VASP/PHON to N/m
-TOL = 1e-20
-
 import numpy
 nar = numpy.add.reduce
 matrix = numpy.matrix
 import cPickle as cp
+from user import a,c,TOL
 
 def matEqual(M0,M1):
   return nar(nar( numpy.array(M0 - M1)**2 )) < TOL
@@ -76,19 +72,19 @@ s = {}
 for i in range(len(inds)):
   if inds[i][0] < 2 and inds[i][1] < 2:
     try:
-      s[('Si-Si',int( nar( vecs[i]**2 ) + 1e-20 ))].append(i) 
+      s[('Si-Si',int( nar( vecs[i]**2 ) + TOL ))].append(i) 
     except:
-      s[('Si-Si',int( nar( vecs[i]**2 ) + 1e-20 ))] = [i] 
+      s[('Si-Si',int( nar( vecs[i]**2 ) + TOL ))] = [i] 
   elif inds[i][0] >= 2 and inds[i][1] >= 2:
     try:
-      s[('V-V',int( nar( vecs[i]**2 ) + 1e-20 ))].append(i) 
+      s[('V-V',int( nar( vecs[i]**2 ) + TOL ))].append(i) 
     except:
-      s[('V-V',int( nar( vecs[i]**2 ) + 1e-20 ))] = [i] 
+      s[('V-V',int( nar( vecs[i]**2 ) + TOL ))] = [i] 
   else:
     try:
-      s[('Si-V',int( nar( vecs[i]**2 ) + 1e-20 ))].append(i) 
+      s[('Si-V',int( nar( vecs[i]**2 ) + TOL ))].append(i) 
     except:
-      s[('Si-V',int( nar( vecs[i]**2 ) + 1e-20 ))] = [i] 
+      s[('Si-V',int( nar( vecs[i]**2 ) + TOL ))] = [i] 
 
 sortedBonds = []
 for key in s.keys():

@@ -1,3 +1,5 @@
+CURRENTLY ONLY FOR V3Si!
+
 The code "harm2fcs.py" takes as input a "HARMONIC" file and a symmetries file
 "S.pkl" and produces the following two pickle files:
 
@@ -13,9 +15,23 @@ sortedBonds.pkl    a list of lists of lists of tuples, sB[a][b][c] where:
 It also overwrites "S.pkl" with a copy that has 0.0 in the place of _very_ 
 small numbers, and has the identity matrix at the start of the list.
 
-It currently has two magic numbers, both at the top of the file:
+The code "fcs2bvkIn.py" takes the outputs of "harm2fcs.py" --- namely "S.pkl",
+"bonds.pkl", and "sortedBonds.pkl" --- and prints a list of bonds, ready
+for BvK use.
+
+The code "V3Si.sh" uses the contents of "V3Si.head", "V3Si.tail" and the output
+from "fcs2bvkIn.py" in order to cobble together a BvK syspy file, "V3Si".
+
+HARDWIRED ITEMS:
+The code as a whole currently has three magic numbers all stored in user.py:
+
   a = 1.177245   This is a number to normalize bond vectors to integers.
                     "harm2fcs.py" should be rewritten without it!
   c = -16.021765 Converts VASP/PHON (eV/angstrom?) force constant units to N/m.
+  TOL = 1e-20 for floating point comparisons
 
+At a minimum, the part of "harm2fcs.py" where the dictionary gets filled has
+keys and logic for V3Si hardwired in.  Whether there is other hardwiring ---
+either completely separate or as a result of this --- is still unclear to me.
 
+Clearly V3Si.sh uses hardwired stuff as well.  That's probably ok, though.

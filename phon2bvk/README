@@ -1,0 +1,21 @@
+The code "harm2fcs.py" takes as input a "HARMONIC" file and a symmetries file
+"S.pkl" and produces the following two pickle files:
+
+bonds.pkl          a list of all of the (non self-) bonds in BvK compatible 
+                     format
+sortedBonds.pkl    a list of lists of lists of tuples, sB[a][b][c] where:
+        a indexes (bond length && atom types)
+        b indexes bond types (all with the same (bond length && atom types))
+        c indexes tuples, where the first number in the tuple is the index
+            of the bond in the list from "bonds.pkl", and the second index
+            gives the appropriate element in "S.pkl"
+
+It also overwrites "S.pkl" with a copy that has 0.0 in the place of _very_ 
+small numbers, and has the identity matrix at the start of the list.
+
+It currently has two magic numbers, both at the top of the file:
+  a = 1.177245   This is a number to normalize bond vectors to integers.
+                    "harm2fcs.py" should be rewritten without it!
+  c = -16.021765 Converts VASP/PHON (eV/angstrom?) force constant units to N/m.
+
+

@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+import System
+from math import sqrt
+import numpy as np
+
+a=4.7089800000
+m1=8.4590334e-26  # V atomic mass in kg
+m2=4.6637061e-26  # Si atomic mass in kg
+
+cell=[
+  a,0,0,
+  0,a,0,
+  0,0,a,
+]
+
+atoms=[
+  [ "Si1", m2 ],
+  [ "Si2", m2 ],
+  [ "V1", m1 ],
+  [ "V2", m1 ],
+  [ "V3", m1 ],
+  [ "V4", m1 ],
+  [ "V5", m1 ],
+  [ "V6", m1 ]
+]
+
+sites=[
+  [ 0.0, 0.0, 0.0,          0],
+  [ 0.5*a, 0.5*a, 0.5*a,    1],
+  [ 0.25*a, 0.50*a, 0.00*a, 2],
+  [ 0.75*a, 0.50*a, 0.00*a, 3],
+  [ 0.00*a, 0.25*a, 0.50*a, 4],
+  [ 0.00*a, 0.75*a, 0.50*a, 5],
+  [ 0.50*a, 0.00*a, 0.25*a, 6],
+  [ 0.50*a, 0.00*a, 0.75*a, 7]
+]
+
+bonds =  \

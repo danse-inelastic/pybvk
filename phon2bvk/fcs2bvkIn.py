@@ -44,6 +44,8 @@ for b in range(len(B)):
   if bases.count(b) != 1:
     B[b][3] -= B[b][3]
   
+# Modify an FCT here:
+# B[16][3] *= 1.2 # 16 is in bases.
 # Replace FCT with rotated base FCT.
 
 for i in range(len(sB)):

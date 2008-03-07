@@ -17,7 +17,8 @@ int main(int argc,char *argv[]) {
   System* system=systemRead("system");
 
   int nq=0;
-  EigenValue* om2s = eigenvalueRead("Omega2",&nq);
+  QPoint* qs=qpointRead("WeightedQ",&nq);
+  EigenValue* om2s = eigenvalueRead("Omega2",&nq); // Should this affect nq?
   printf("%d Q points\n",nq);
 
   EigenVector* pols; pols=0; // Kill the warning.
@@ -51,9 +52,9 @@ int main(int argc,char *argv[]) {
       val+=dBin/2.0;
       for(int s=0;s<nSites;s++){
         index = nSites*dim*nSites*q + nSites*sd + s;
-        weight = 1.0;
+        weight = qs[q].weight;
         if(withVecs == 1){
-          weight = EigenVectorMag2(&pols[index]);
+          weight *= EigenVectorMag2(&pols[index]);
         }
         int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
         bins[ nBins*s + bin ] += weight;

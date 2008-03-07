@@ -20,7 +20,7 @@ def read(filename='DOS'):
   dE,       = unpack('<d',f[i:i+dubSize])               ; i += dubSize
   DOS       = unpack('<%id' % (N_Bins),f[i:])
   DOS = numpy.array(DOS)
-  E = numpy.arange(0,N_Bins*dE,dE)
+  E = numpy.arange(N_Bins)*dE
   return (filetype.strip('\x00'),version,comment.strip('\x00')),E,DOS
 
 

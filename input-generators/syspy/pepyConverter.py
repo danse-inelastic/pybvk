@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 def perl2py(inStr):
   return inStr.replace(";","")\

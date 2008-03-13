@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 a = 1.177245   # number to normalize bond vectors to integers.
                #   This should be rewritten without this crutch!

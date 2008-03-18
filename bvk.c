@@ -22,6 +22,8 @@ extern double fastexp(double x);
 static const double hbar=1.0545716e-34;                     // kg*m^2
 static const double kB=1.3806503e-23;                       // kg*m^2
 
+const double dosScale=1.0/(2*M_PI*1e12); // THz
+
 // Units: T(K), kappa(1/m)
 // Performance: takes about 0.5s per 1M qs
 // See Squires 3.74, with 'd' there is 'site' here
@@ -260,4 +262,54 @@ int bvkCompute(System* system,int nq,QPoint* qs,
   printf("\n%d q in %ld us: %ld q/s\n",nq,us,(long)(1000000.0*nq/us));
 
   return nq*d.n;
+}
+
+int pdCompute(int nSites,int nq,QPoint* qs,
+              EigenValue* om2s,EigenVector* pols,
+              int withVecs,double dBin,double** dbins,double** dtotal) {
+
+  int dim=3;
+  double maxFreq=0;
+  for(int f=0;f<nq*nSites*dim;f++){
+   om2s[f].v = sqrt(om2s[f].v)*dosScale;
+   if( om2s[f].v > maxFreq ){ maxFreq = om2s[f].v; }
+  }
+  printf("Maximum frequency = %f\n",maxFreq);
+
+  int nBins=(int)(maxFreq/dBin)+10;
+  double* bins=(double*)malloc(sizeof(double)*nBins*nSites);
+
+  double* sums=(double*)malloc(sizeof(double)*nSites);
+  for(int i=0;i<nSites;i++){ sums[i] = 0.0; }
+
+  double weight=0;
+  double val=0;
+  int index=0;
+  for(int q=0;q<nq;q++){
+    for(int sd=0;sd<nSites*dim;sd++){
+      val=om2s[nSites*dim*q+sd].v;
+      // assert(val>0,"value must be >0");
+      val+=dBin/2.0;
+      for(int s=0;s<nSites;s++){
+        weight = qs[q].weight;
+        if(withVecs == 1){
+          index = nSites*dim*nSites*q + nSites*sd + s;
+          weight *= EigenVectorMag2(&pols[index]);
+        }
+        int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
+        bins[ nBins*s + bin ] += weight;
+        sums[s] += weight;
+      }
+    }
+  }
+
+  double* total=(double*)malloc(sizeof(double)*nBins);
+  for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
+      bins[nBins*s + b] /= sums[s]*dBin;
+      total[b] += bins[nBins*s + b]/(double)nSites;
+  }}
+
+  *dbins=bins;
+  *dtotal=total;
+  return nBins;
 }

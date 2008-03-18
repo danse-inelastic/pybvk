@@ -5,8 +5,6 @@
 #include "state.h"
 #include "bvk.h"
 
-const double dosScale=1.0/(2*M_PI*1e12); // THz
-
 int main(int argc,char *argv[]) {
   setvbuf(stdout,NULL,_IONBF,0);
   srand48(getpid()*234597574378);
@@ -15,59 +13,24 @@ int main(int argc,char *argv[]) {
   double dBin=atof(argv[2]);
 
   System* system=systemRead("system");
+  int nSites=system->c->sites;
 
   int nq=0;
   QPoint* qs=qpointRead("WeightedQ",&nq);
   EigenValue* om2s = eigenvalueRead("Omega2",&nq); // Should this affect nq?
   printf("%d Q points\n",nq);
 
-  EigenVector* pols; pols=0; // Kill the warning.
+  double* bins;
+  double* total;
+
+  int nBins=0;
   if(withVecs == 1){
+    EigenVector* pols; pols=0; // Kill the warning.
     pols = eigenvectorRead("Polarizations");
+    nBins=pdCompute(nSites,nq,qs,om2s,pols,1,dBin,&bins,&total);
+  } else { // Don't use eigenvectors
+    nBins=pdCompute(nSites,nq,qs,om2s,NULL,0,dBin,&bins,&total);
   }
-
-  int nSites=system->c->sites;
-  int dim=3;
-
-  double maxFreq=0;
-  for(int f=0;f<nq*nSites*dim;f++){
-   om2s[f].v = sqrt(om2s[f].v)*dosScale;
-   if( om2s[f].v > maxFreq ){ maxFreq = om2s[f].v; }
-  }
-
-  double* sums=(double*)malloc(sizeof(double)*nSites);
-  for(int i=0;i<nSites;i++){ sums[i] = 0.0; }
-
-  int nBins=(int)(maxFreq/dBin)+10;
-  double* bins=(double*)malloc(sizeof(double)*nBins*nSites);
-  printf("Maximum frequency = %f\n",maxFreq);
-
-  double weight=0;
-  double val=0;
-  int index=0;
-  for(int q=0;q<nq;q++){
-    for(int sd=0;sd<nSites*dim;sd++){
-      val=om2s[nSites*dim*q+sd].v;
-      // assert(val>0,"value must be >0");
-      val+=dBin/2.0;
-      for(int s=0;s<nSites;s++){
-        index = nSites*dim*nSites*q + nSites*sd + s;
-        weight = qs[q].weight;
-        if(withVecs == 1){
-          weight *= EigenVectorMag2(&pols[index]);
-        }
-        int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
-        bins[ nBins*s + bin ] += weight;
-        sums[s] += weight;
-      }
-    }
-  }
-
-  double* total=(double*)malloc(sizeof(double)*nBins);
-  for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
-      bins[nBins*s + b] /= sums[s]*dBin;
-      total[b] += bins[nBins*s + b]/(double)nSites;
-  }}
 
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);

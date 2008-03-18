@@ -27,4 +27,10 @@ int* bvkComputeDOS(int nq,QPoint* qs,int nSites,EigenValue* vs,double scale,
 
 double bvkMaxOmega(int nw,EigenValue* ws,double* minOmega);
 
+int pdCompute(int nSites,int nq,QPoint* qs,
+              EigenValue* om2s,EigenVector* pols,
+              int withVecs,double dBin,double** dbins,double** dtotal);
+              // EigenValue** om2s,EigenVector** pols,
+              // int withVecs,double dBin,double* dbins,double* dtotal);
+
 #endif // BVK_H

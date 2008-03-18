@@ -1,0 +1,19 @@
+# -*- Makefile -*-
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# Mike McKerns
+# mmckerns@caltech.edu
+# (C) 2008 All Rights Reserved
+# 
+# <LicenseText>
+# 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# C++
+
+    PROJ_CXX_INCLUDES = ..
+
+# version
+# $Id$
+# End of file

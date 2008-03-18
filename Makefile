@@ -11,14 +11,19 @@ LDFLAGS	= $(IFLAGS)
 ##LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lg2c -lm -lgfortran
 LIBS 	= -L$(LAPACK_DIR)/lib/atlas -llapack -L$(HOME)/lib -lg2c -lm
 #---------------------------------------------------
-SOURCES	= system.c bvk.c h.c pd.c randomQs.c regularQs.c
+SOURCES	= system.c bvk.c fwd.c h.c pd.c randomQs.c regularQs.c
 OBJECTS	= bvk.o system.o
 #---------------------------------------------------
 
-all: base h pd randomQs regularQs
+all: fwd
+
+steps: h pd randomQs regularQs 
 
 base:
 	$(CC) $(CFLAGS) -c $(SOURCES)
+
+fwd: base
+	$(CC) $(LDFLAGS) -o fwd fwd.o $(OBJECTS) $(LIBS)
 
 h: base
 	$(CC) $(LDFLAGS) -o h h.o $(OBJECTS) $(LIBS)
@@ -40,5 +45,5 @@ clean:
 
 restore: clean
 	rm -f *.pyc _*.so 
-	rm -f h pd randomQs regularQs
+	rm -f fwd h pd randomQs regularQs
 	rm -f system WeightedQ dos freqs Polarizations Omega2 DOS*

@@ -313,3 +313,103 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   *dtotal=total;
   return nBins;
 }
+
+// get eigenvalues & eigenvectors
+int h(int withVecs) {
+  System* system=systemRead("system");
+  systemComputeBonds(system);
+
+  int nq;
+  QPoint* qs=qpointRead("WeightedQ",&nq);
+  printf("%d Q points\n",nq);
+
+  EigenValue* vs;
+
+  int nv=0;
+  if(withVecs == 1){ 
+    printf("You want vectors!\n");
+    EigenVector* es; 
+    nv=bvkCompute(system,nq,qs,&vs,&es);
+    eigenvectorWrite("Polarizations",nq,system->c->sites,es);
+  }
+  else{ nv=bvkCompute(system,nq,qs,&vs,NULL); }
+
+  qpointWrite("WeightedQ",nq,qs);
+  eigenvalueWrite("Omega2",nq,system->c->sites,vs);
+  return 1;
+}
+
+// get DOSs
+int pd(int withVecs,double dBin) {
+  System* system=systemRead("system");
+  int nSites=system->c->sites;
+
+  int nq=0;
+  QPoint* qs=qpointRead("WeightedQ",&nq);
+  EigenValue* om2s = eigenvalueRead("Omega2",&nq); // Should this affect nq?
+  printf("%d Q points\n",nq);
+
+  double* bins;
+  double* total;
+
+  int nBins=0;
+  if(withVecs == 1){
+    EigenVector* pols; pols=0; // Kill the warning.
+    pols = eigenvectorRead("Polarizations");
+    nBins=pdCompute(nSites,nq,qs,om2s,pols,1,dBin,&bins,&total);
+  } else { // Don't use eigenvectors
+    nBins=pdCompute(nSites,nq,qs,om2s,NULL,0,dBin,&bins,&total);
+  }
+
+  printf("number of bins  = %d\n",nBins);
+  printf("number of sites = %d\n",nSites);
+  char filename[8]; 
+  char filetype[64] = "DOS";
+  int version = 1;
+
+  if(withVecs == 1){
+    char pcomment[1024] = "partial DOS from a BvK simulation.";
+    for(int s=0;s<nSites;s++){ 
+      sprintf(filename,"DOS.%d",s);
+      dosWrite(filename,filetype,version,pcomment,nBins,dBin,&bins[s*nBins]);
+    }
+  }
+
+  char tcomment[1024] = "total DOS from a BvK simulation.";
+  dosWrite("DOS",filetype,version,tcomment,nBins,dBin,total);
+  return 1;
+}
+
+// generate q-points
+int Qps(int type,int N) {
+  System* system=systemRead("system");
+
+  int nq;
+  QPoint* qs;
+  if(type == 1) {
+    qs=qpointGenRegularInRCell(system,&nq,N);
+  } else {
+    qs=qpointGenRandomInRCell(system,&nq,N);
+  }
+  printf("%d Q points\n",nq);
+
+  qpointWrite("WeightedQ",nq,qs);
+  return 1;
+}
+
+// generate random q-points
+int randomQs(int N) { // type = 0
+  return Qps(0,N);
+}
+
+// generate regular q-points
+int regularQs(int N) { // type = 1
+  return Qps(1,N);
+}
+
+// hide vanilla setup stuff here
+int initSetup(void) {
+  setvbuf(stdout,NULL,_IONBF,0);
+  srand48(getpid()*234597574378);
+  return 1;
+}

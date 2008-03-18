@@ -30,7 +30,17 @@ double bvkMaxOmega(int nw,EigenValue* ws,double* minOmega);
 int pdCompute(int nSites,int nq,QPoint* qs,
               EigenValue* om2s,EigenVector* pols,
               int withVecs,double dBin,double** dbins,double** dtotal);
-              // EigenValue** om2s,EigenVector** pols,
-              // int withVecs,double dBin,double* dbins,double* dtotal);
+
+int h(int withVecs);
+
+int pd(int withVecs,double dBin);
+
+int initSetup(void);
+
+int Qps(int type,int N);
+
+int randomQs(int N);
+
+int regularQs(int N);
 
 #endif // BVK_H

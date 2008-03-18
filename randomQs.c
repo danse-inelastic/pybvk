@@ -5,19 +5,10 @@
 #include "state.h"
 #include "bvk.h"
 
+// main: generate random q-points
 int main(int argc,char *argv[]) {
   int N = atoi(argv[1]);
-
-  setvbuf(stdout,NULL,_IONBF,0);
-  srand48(getpid()*234597574378);
-
-  System* system=systemRead("system");
-
-  int nq;
-  QPoint* qs=qpointGenRandomInRCell(system,&nq,N);
-  printf("%d Q points\n",nq);
-
-  qpointWrite("WeightedQ",nq,qs);
-
+  initSetup();
+  randomQs(N);
   printf("Ssee program? iss kap\\\"ut.\n");
 }

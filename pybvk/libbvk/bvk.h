@@ -29,18 +29,82 @@ double bvkMaxOmega(int nw,EigenValue* ws,double* minOmega);
 
 int pdCompute(int nSites,int nq,QPoint* qs,
               EigenValue* om2s,EigenVector* pols,
-              int withVecs,double dBin,double** dbins,double** dtotal);
+              double dBin,double** dbins,double** dtotal);
 
 int h(int withVecs);
 
 int pd(int withVecs,double dBin);
 
-int initSetup(void);
+//XXX: 'file-driven' methods ----------
+void partialDosWrite(int nSites,int nBins,double dBin,double* bins);
+
+void totalDosWrite(int nBins,double dBin,double* total);
 
 int Qps(int type,int N);
 
 int randomQs(int N);
 
 int regularQs(int N);
+
+//XXX: targets for python bindings -----
+// (also see state.h)
+int initSetup(void);
+
+/*
+//XXX: Better to return eigenvector or eigenvalue?
+// get eigenvalues & eigenvectors
+static inline
+EigenVector* generateEigenValues(int withVecs,System* system,int nq,
+                                 QPoint* qs,EigenValue** vs) {
+  systemComputeBonds(system);
+  EigenValue* vus;
+
+  int nv=0;
+  if(withVecs == 1){ 
+    EigenVector* es; 
+    nv=bvkCompute(system,nq,qs,&vus,&es);
+    *vs = vus;
+    return es;
+  }
+  nv=bvkCompute(system,nq,qs,&vus,NULL);
+  *vs = vus;
+  return NULL;
+}
+*/
+
+// get eigenvalues & eigenvectors
+static inline
+EigenValue* generateEigenValues(int withVecs,System* system,int nq,
+                                 QPoint* qs,EigenVector** es) {
+  systemComputeBonds(system); //XXX: Belongs inside generateEigenValues?
+  EigenValue* vs;
+
+  int nv=0;
+  if(withVecs == 1){ 
+    EigenVector* evs; 
+    nv=bvkCompute(system,nq,qs,&vs,&evs);
+    *es = evs;
+  } else {
+    nv=bvkCompute(system,nq,qs,&vs,NULL);
+    *es = NULL;
+  }
+  return vs;
+}
+
+// get DOSs
+// XXX: Is this useful? ...probably better to simply adjust pdCompute
+static inline
+double* generateDOS(int nSites,int nq,QPoint* qs,
+                     EigenValue* om2s,EigenVector* pols,
+                     double dBin,int* nmbins,double** pdbins) {
+  double* bins;
+  double* total;
+  // NOTE: if not using eigenvectors, assume they are passed in as NULL
+  int nBins=pdCompute(nSites,nq,qs,om2s,pols,dBin,&bins,&total);
+
+  *nmbins = nBins;
+  *pdbins = bins;
+  return total;
+}
 
 #endif // BVK_H

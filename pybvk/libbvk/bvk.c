@@ -5,6 +5,7 @@
 #include "system.h"
 #include "state.h"
 #include "vector.h"
+#include "bvk.h"
 
 #ifdef __amd64__
   #include <acml.h>
@@ -233,25 +234,26 @@ int bvkCompute(System* system,int nq,QPoint* qs,
     if(info!=0) { printf("zheev failed\n"); abort(); }
 
     // Save the eigenvalues and eigenvectors in eig for later writing
-    for(int i=0;i<d.n;i++) {
-      (eigValue++)->v=v[i];
-      if(pes) {
+    if(pes) { //use eigenvectors
+      for(int i=0;i<d.n;i++) {
+        (eigValue++)->v=v[i];
         memcpy(eigVector,&d.e[d.n*i],sizeof(doublecomplex)*d.n);
         eigVector+=d.n/3;
-//        memcpy(eigVector+=d.n,&d.e[d.n*i],sizeof(doublecomplex)*d.n);
+//      memcpy(eigVector+=d.n,&d.e[d.n*i],sizeof(doublecomplex)*d.n);
       }
-    }
-
-    if(pes && eigenvectorsStdout) {
-      // Write the eivenvalues and eigenvectors to stdout
+      if(eigenvectorsStdout) { //Write eigenvalues & eigenvectors to stdout
+        for(int i=0;i<d.n;i++) {
+          printf("%le ",v[i]);
+          for(int j=0;j<d.n;j++)
+            printf("%7.4lf/%7.4lf ",d.e[d.n*i+j].real,d.e[d.n*i+j].imag);
+              printf("\n");
+        }
+      }
+    } else { //don't use eigenvectors
       for(int i=0;i<d.n;i++) {
-        printf("%le ",v[i]);
-        for(int j=0;j<d.n;j++)
-          printf("%7.4lf/%7.4lf ",d.e[d.n*i+j].real,d.e[d.n*i+j].imag);
-            printf("\n");
+      (eigValue++)->v=v[i];
       }
     }
-
   }
 
   struct timeval finish;
@@ -266,7 +268,7 @@ int bvkCompute(System* system,int nq,QPoint* qs,
 
 int pdCompute(int nSites,int nq,QPoint* qs,
               EigenValue* om2s,EigenVector* pols,
-              int withVecs,double dBin,double** dbins,double** dtotal) {
+              double dBin,double** dbins,double** dtotal) {
 
   int dim=3;
   double maxFreq=0;
@@ -285,20 +287,34 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   double weight=0;
   double val=0;
   int index=0;
-  for(int q=0;q<nq;q++){
-    for(int sd=0;sd<nSites*dim;sd++){
-      val=om2s[nSites*dim*q+sd].v;
-      // assert(val>0,"value must be >0");
-      val+=dBin/2.0;
-      for(int s=0;s<nSites;s++){
-        weight = qs[q].weight;
-        if(withVecs == 1){
-          index = nSites*dim*nSites*q + nSites*sd + s;
-          weight *= EigenVectorMag2(&pols[index]);
+  if(pols) { // use eigenvectors
+    for(int q=0;q<nq;q++){
+      for(int sd=0;sd<nSites*dim;sd++){
+        val=om2s[nSites*dim*q+sd].v;
+        // assert(val>0,"value must be >0");
+        val+=dBin/2.0;
+        for(int s=0;s<nSites;s++){
+          weight = qs[q].weight;
+          index = nSites*dim*nSites*q + nSites*sd + s;  //XXX: withVecs
+          weight *= EigenVectorMag2(&pols[index]);      //XXX: withVecs
+          int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
+          bins[ nBins*s + bin ] += weight;
+          sums[s] += weight;
         }
-        int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
-        bins[ nBins*s + bin ] += weight;
-        sums[s] += weight;
+      }
+    }
+  } else { //XXX: same as above, w/o the two withVecs lines
+    for(int q=0;q<nq;q++){
+      for(int sd=0;sd<nSites*dim;sd++){
+        val=om2s[nSites*dim*q+sd].v;
+        // assert(val>0,"value must be >0");
+        val+=dBin/2.0;
+        for(int s=0;s<nSites;s++){
+          weight = qs[q].weight;
+          int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
+          bins[ nBins*s + bin ] += weight;
+          sums[s] += weight;
+        }
       }
     }
   }
@@ -314,30 +330,7 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   return nBins;
 }
 
-// get eigenvalues & eigenvectors
-int h(int withVecs) {
-  System* system=systemRead("system");
-  systemComputeBonds(system);
-
-  int nq;
-  QPoint* qs=qpointRead("WeightedQ",&nq);
-  printf("%d Q points\n",nq);
-
-  EigenValue* vs;
-
-  int nv=0;
-  if(withVecs == 1){ 
-    printf("You want vectors!\n");
-    EigenVector* es; 
-    nv=bvkCompute(system,nq,qs,&vs,&es);
-    eigenvectorWrite("Polarizations",nq,system->c->sites,es);
-  }
-  else{ nv=bvkCompute(system,nq,qs,&vs,NULL); }
-
-  qpointWrite("WeightedQ",nq,qs);
-  eigenvalueWrite("Omega2",nq,system->c->sites,vs);
-  return 1;
-}
+// XXX: 'file-driven' methods ----------
 
 // get DOSs
 int pd(int withVecs,double dBin) {
@@ -356,41 +349,79 @@ int pd(int withVecs,double dBin) {
   if(withVecs == 1){
     EigenVector* pols; pols=0; // Kill the warning.
     pols = eigenvectorRead("Polarizations");
-    nBins=pdCompute(nSites,nq,qs,om2s,pols,1,dBin,&bins,&total);
+    nBins=pdCompute(nSites,nq,qs,om2s,pols,dBin,&bins,&total);
+    //XXX: total=generateDOS(nSites,nq,qs,om2s,pols,dBin,&nBins,&bins);
   } else { // Don't use eigenvectors
-    nBins=pdCompute(nSites,nq,qs,om2s,NULL,0,dBin,&bins,&total);
+    nBins=pdCompute(nSites,nq,qs,om2s,NULL,dBin,&bins,&total);
+    //XXX: total=generateDOS(nSites,nq,qs,om2s,NULL,dBin,&nBins,&bins);
   }
-
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);
+
+  if(withVecs == 1){
+    partialDosWrite(nSites,nBins,dBin,bins);
+  }
+  totalDosWrite(nBins,dBin,total);
+  return 1;
+}
+
+// write partial DOSs to file
+void partialDosWrite(int nSites,int nBins,double dBin,double* bins) {
   char filename[8]; 
   char filetype[64] = "DOS";
   int version = 1;
-
-  if(withVecs == 1){
-    char pcomment[1024] = "partial DOS from a BvK simulation.";
-    for(int s=0;s<nSites;s++){ 
-      sprintf(filename,"DOS.%d",s);
-      dosWrite(filename,filetype,version,pcomment,nBins,dBin,&bins[s*nBins]);
-    }
+  char pcomment[1024] = "partial DOS from a BvK simulation.";
+  for(int s=0;s<nSites;s++){ 
+    sprintf(filename,"DOS.%d",s);
+    dosWrite(filename,filetype,version,pcomment,nBins,dBin,&bins[s*nBins]);
   }
+  return;
+}
 
+// write total DOS to file
+void totalDosWrite(int nBins,double dBin,double* total) {
+  char filetype[64] = "DOS";
+  int version = 1;
   char tcomment[1024] = "total DOS from a BvK simulation.";
   dosWrite("DOS",filetype,version,tcomment,nBins,dBin,total);
+  return;
+}
+
+// get eigenvalues & eigenvectors
+// NOTE: reads 'system','WeightedQ' files
+//       writes 'Omega2','Polarizations' files
+int h(int withVecs) {
+  System* system=systemRead("system");
+  int nSites=system->c->sites;
+
+  int nq;
+  QPoint* qs=qpointRead("WeightedQ",&nq);
+  printf("%d Q points\n",nq);
+
+  //XXX: Better to return eigenvector or eigenvalue? (see bvk.h)
+  //EigenValue* vs;
+  //EigenVector* es=generateEigenValues(withVecs,system,nq,qs,&vs);
+  EigenVector* es=NULL;
+  EigenValue* vs=generateEigenValues(withVecs,system,nq,qs,&es);
+  //XXX: Better to merge "generateEigenValues" with "bvkCompute"?
+
+  if(withVecs == 1){ 
+    printf("You want vectors!\n");
+    eigenvectorWrite("Polarizations",nq,nSites,es);
+  }
+  qpointWrite("WeightedQ",nq,qs);
+  eigenvalueWrite("Omega2",nq,nSites,vs);
   return 1;
 }
 
 // generate q-points
+// NOTE: reads 'system' file
+//       writes 'WeightedQ' file
 int Qps(int type,int N) {
   System* system=systemRead("system");
 
   int nq;
-  QPoint* qs;
-  if(type == 1) {
-    qs=qpointGenRegularInRCell(system,&nq,N);
-  } else {
-    qs=qpointGenRandomInRCell(system,&nq,N);
-  }
+  QPoint* qs=generateQpoints(type,system,&nq,N);
   printf("%d Q points\n",nq);
 
   qpointWrite("WeightedQ",nq,qs);
@@ -406,6 +437,8 @@ int randomQs(int N) { // type = 0
 int regularQs(int N) { // type = 1
   return Qps(1,N);
 }
+
+// XXX: targets for python bindings -----
 
 // hide vanilla setup stuff here
 int initSetup(void) {

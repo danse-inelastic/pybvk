@@ -58,9 +58,11 @@ EXPORT_HEADERS = \
     bvk.h \
     die.h \
     dinaw.h \
+    mylapack.h \
     state.h \
     system.h \
     vector.h 
+#   fwd.h \
 
 EXPORT_LIBS = $(PROJ_SAR)
 EXPORT_BINS = $(PROJ_DLL)

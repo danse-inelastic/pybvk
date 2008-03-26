@@ -443,6 +443,7 @@ int regularQs(int N) { // type = 1
 // hide vanilla setup stuff here
 int initSetup(void) {
   setvbuf(stdout,NULL,_IONBF,0);
-  srand48(getpid()*234597574378);
+  //srand48(getpid()*234597574378);
+  srand48(getpid()*2345975743);
   return 1;
 }

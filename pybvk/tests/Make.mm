@@ -13,12 +13,14 @@
 PROJECT = bvk
 PACKAGE = tests
 
+include local.def
+
 PROJ_CLEAN += $(PROJ_CPPTESTS)
 
 PROJ_PYTESTS = signon.py
-PROJ_CPPTESTS = hello
+PROJ_CPPTESTS = hello 
 PROJ_TESTS = $(PROJ_PYTESTS) $(PROJ_CPPTESTS)
-PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk
+PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk -llapack
 
 #--------------------------------------------------------------------------
 #

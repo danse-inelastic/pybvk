@@ -13,7 +13,7 @@
 #include <portinfo>
 #include <iostream>
 
-#include "../libbvk/sanity.h"
+#include "libbvk/sanity.h"
 
 int main() {
 

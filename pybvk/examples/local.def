@@ -10,22 +10,14 @@
 # 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-PROJECT = bvk
-PACKAGE = _bvk
-MODULE = _bvk
-#PACKAGE = bvkmodule
-#MODULE = bvk
 
-include std-pythonmodule.def
-include local.def
+# C++
+    
+    SRC_LIBDIR = ../libbvk
 
-PROJ_CXX_SRCLIB = -llapack -lbvk
+# lapack (add the location for liblapack.so)
 
-PROJ_SRCS = \
-    bindings.cc \
-    exceptions.cc \
-    misc.cc \
-#   _bvk.cc
+    PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
 
 
 # version

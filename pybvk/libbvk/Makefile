@@ -19,6 +19,9 @@ all: fwd
 
 steps: h pd randomQs regularQs 
 
+systems:
+	cd input-generators/syspy ; make ; make clean ; cd ../..
+
 base:
 	$(CC) $(CFLAGS) -c $(SOURCES)
 
@@ -47,3 +50,4 @@ restore: clean
 	rm -f *.pyc _*.so 
 	rm -f fwd h pd randomQs regularQs
 	rm -f system WeightedQ dos freqs Polarizations Omega2 DOS*
+	cd input-generators/syspy ; make restore ; cd ../..

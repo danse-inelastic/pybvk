@@ -16,5 +16,4 @@ clean:
 
 restore: clean
 	rm -f *.pyc _*.so 
-	rm -f $(SYSDIR)/*
-	rmdir $(SYSDIR)
+	rm -rf $(SYSDIR)

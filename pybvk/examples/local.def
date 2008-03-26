@@ -14,11 +14,15 @@
 # C++
     
     SRC_LIBDIR = ../libbvk
+    SRC_SYSDIR = $(SRC_LIBDIR)/input-generators/syspy
 
 # lapack (add the location for liblapack.so)
 
     PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
 
+# Python
+
+    PYTHONPATH += $(SRC_SYSDIR)
 
 # version
 # $Id$

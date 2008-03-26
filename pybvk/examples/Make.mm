@@ -15,7 +15,7 @@ PACKAGE = examples
 
 include local.def
 
-PROJ_OUTS = DOS* Omega2 Polarizations WeightedQ system g.py
+PROJ_OUTS = DOS* Omega2 Polarizations WeightedQ system g.py syms
 PROJ_CLEAN += $(PROJ_CPPDEMO) $(PROJ_OUTS)
 
 PROJ_PYDEMO =
@@ -56,7 +56,9 @@ gpy:
 	$(CP) $(SRC_LIBDIR)/g.py .
 
 system:
-	$(CP) $(SRC_LIBDIR)/systems/Al ./system
+	$(LN_S) $(SRC_SYSDIR)/syms ./syms
+	$(PYTHON) $(SRC_SYSDIR)/Al
+#	$(RM_F) ./syms
 
 
 # version

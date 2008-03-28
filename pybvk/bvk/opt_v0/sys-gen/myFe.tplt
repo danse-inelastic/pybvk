@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+import System
+from math import sqrt
+
+
+a=2.0
+m=9.5434588e-26  # Fe57 atomic mass in kg
+
+cell=[
+  a,0,0,
+  0,a,0,
+  0.5*a,0.5*a,0.5*a,
+]
+
+atoms=[
+  [ "Fe", m ],
+]
+
+sites=[
+  [ 0,0,0,             0 ],
+]
+
+bonds=[
+  [ 0,0, 1,1,1,                                  FC01, FC02, FC02,
+                                                 FC02, FC01, FC02,
+                                                 FC02, FC02, FC01],
+  [ 0,0, 2,0,0,                                  FC03, 0.00, 0.00,
+                                                 0.00, FC04, 0.00,
+                                                 0.00, 0.00, FC04],
+  [ 0,0, 2,2,0,                                  FC05, FC06, 0.00,
+                                                 FC06, FC05, 0.00,
+                                                 0.00, 0.00, FC07],
+  [ 0,0, 3,1,1,                                  FC08, FC09, FC09,
+                                                 FC09, FC10, FC11,
+                                                 FC09, FC11, FC10],
+  [ 0,0, 2,2,2,                                  FC12, FC13, FC13,
+                                                 FC13, FC12, FC13,
+                                                 FC13, FC13, FC12],
+]
+
+System.write(cell,atoms,sites,bonds,"cubic")

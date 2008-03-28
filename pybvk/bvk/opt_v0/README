@@ -1,0 +1,3 @@
+To run (currently set for n00, in opt.py):
+
+$ nohup opt.py 1>optimize.out 2>optimize.err &

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+rm -f system
+
+# ./mk
+
+( cd input-generators/syspy ; ./$2 ; mv system ../.. ; cd ../.. )
+
+# ( cd input-generators/qs/cubicMPGrid; ./h $4 > out; mv WeightedQ ../../../ ) 
+# ( cd input-generators/qs/directionalQs; ./mk; ./h; mv WeightedQ ../../../ ) 
+
+./randomQs $4  # ./regularQs $4
+
+( rsh -. $1 ./h $3     ) < /dev/null 2>&1 | tee /dev/null
+( rsh -. $1 ./pd $3 $5 ) < /dev/null 2>&1 | tee /dev/null
+
+./g.py DOS*

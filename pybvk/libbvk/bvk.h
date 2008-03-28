@@ -47,8 +47,13 @@ int randomQs(int N);
 int regularQs(int N);
 
 //XXX: targets for python bindings -----
-// (also see state.h)
 int initSetup(void);
+
+QPoint* generateQpoints(int type,System* system,int* nq,int N);
+
+QPoint* generateRandomQs(System* system,int* nq,int N);
+
+QPoint* generateRegularQs(System* system,int* nq,int N);
 
 /*
 //XXX: Better to return eigenvector or eigenvalue?

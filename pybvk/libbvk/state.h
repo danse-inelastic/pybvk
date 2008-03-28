@@ -314,36 +314,4 @@ static inline void eigenvectorWrite(char* fn,int nq,int nSites,
   close(io);
 }
 
-//XXX: targets for python bindings -----
-
-// generate qpoints for selected system
-// NOTE: new qpoint methods go here
-static inline QPoint* generateQpoints(int type,System* system,int* nq,int N) {
-  int nqs;
-  QPoint* qs;
-  if(type == 1) {
-    qs=qpointGenRegularInRCell(system,&nqs,N);
-  } else {
-    qs=qpointGenRandomInRCell(system,&nqs,N);
-  }
-  *nq=nqs;
-  return qs;
-}
-
-// generate random q-points for selected system
-static inline QPoint* generateRandomQs(System* system,int* nq,int N) {
-  int nqs;
-  QPoint* qs=generateQpoints(0,system,&nqs,N);
-  *nq = nqs;
-  return qs;
-} // type = 0
-
-// generate regular q-points for selected system
-static inline QPoint* generateRegularQs(System* system,int* nq,int N) {
-  int nqs;
-  QPoint* qs=generateQpoints(1,system,&nqs,N);
-  *nq = nqs;
-  return qs;
-} // type = 1
-
 #endif // STATE_H

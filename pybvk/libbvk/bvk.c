@@ -447,3 +447,34 @@ int initSetup(void) {
   srand48(getpid()*2345975743);
   return 1;
 }
+
+// generate qpoints for selected system
+// NOTE: new qpoint methods go here
+QPoint* generateQpoints(int type,System* system,int* nq,int N) {
+  int nqs;
+  QPoint* qs;
+  if(type == 1) {
+    qs=qpointGenRegularInRCell(system,&nqs,N);
+  } else {
+    qs=qpointGenRandomInRCell(system,&nqs,N);
+  }
+  *nq=nqs;
+  return qs;
+}
+
+// generate random q-points for selected system
+QPoint* generateRandomQs(System* system,int* nq,int N) {
+  int nqs;
+  QPoint* qs=generateQpoints(0,system,&nqs,N);
+  *nq = nqs;
+  return qs;
+} // type = 0
+
+// generate regular q-points for selected system
+QPoint* generateRegularQs(System* system,int* nq,int N) {
+  int nqs;
+  QPoint* qs=generateQpoints(1,system,&nqs,N);
+  *nq = nqs;
+  return qs;
+} // type = 1
+

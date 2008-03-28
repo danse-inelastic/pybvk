@@ -478,3 +478,56 @@ QPoint* generateRegularQs(System* system,int* nq,int N) {
   return qs;
 } // type = 1
 
+/*
+//XXX: Better to return eigenvector or eigenvalue?
+// get eigenvalues & eigenvectors
+EigenVector* generateEigenValues(int withVecs,System* system,int nq,
+                                 QPoint* qs,EigenValue** vs) {
+  systemComputeBonds(system);
+  EigenValue* vus;
+
+  int nv=0;
+  if(withVecs == 1){ 
+    EigenVector* es; 
+    nv=bvkCompute(system,nq,qs,&vus,&es);
+    *vs = vus;
+    return es;
+  }
+  nv=bvkCompute(system,nq,qs,&vus,NULL);
+  *vs = vus;
+  return NULL;
+}
+*/
+
+// get eigenvalues & eigenvectors
+EigenValue* generateEigenValues(int withVecs,System* system,int nq,
+                                 QPoint* qs,EigenVector** es) {
+  systemComputeBonds(system); //XXX: Belongs inside generateEigenValues?
+  EigenValue* vs;
+
+  int nv=0;
+  if(withVecs == 1){ 
+    EigenVector* evs; 
+    nv=bvkCompute(system,nq,qs,&vs,&evs);
+    *es = evs;
+  } else {
+    nv=bvkCompute(system,nq,qs,&vs,NULL);
+    *es = NULL;
+  }
+  return vs;
+}
+
+// get DOSs
+// XXX: Is this useful? ...probably better to simply adjust pdCompute
+double* generateDOS(int nSites,int nq,QPoint* qs,
+                     EigenValue* om2s,EigenVector* pols,
+                     double dBin,int* nmbins,double** pdbins) {
+  double* bins;
+  double* total;
+  // NOTE: if not using eigenvectors, assume they are passed in as NULL
+  int nBins=pdCompute(nSites,nq,qs,om2s,pols,dBin,&bins,&total);
+
+  *nmbins = nBins;
+  *pdbins = bins;
+  return total;
+}

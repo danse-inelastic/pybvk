@@ -314,4 +314,30 @@ static inline void eigenvectorWrite(char* fn,int nq,int nSites,
   close(io);
 }
 
+static inline void qpointPrint(QPoint* qs,int nq,int qnum) {
+  if(qnum>=nq || qnum<0) {       
+    printf("STATE[%d] out of bounds\n", qnum);
+  } else {
+    printf("STATE[%d] (x,y,z,weight): %lf %lf %lf %lf\n",
+           qnum, qs[qnum].v.x, qs[qnum].v.y, qs[qnum].v.z, qs[qnum].weight);
+  }
+  return;
+}
+
+static inline void eigenPrint(EigenValue* v,EigenVector* e,
+                              int d, int ns, int nq,int evn) {
+  int dn = d*ns;  // dimensions * sites
+  if(evn>=nq*dn || evn<0) {
+    printf("VALUE[%d] out of bounds\n", evn);
+    return;
+  }
+  printf("VALUE[%d] = %8.3le\n",evn,v[evn].v);
+  if(e) { // EigenVectors = NULL
+    printf(" VEC(x,y,z): % 8.3le%+8.3lei % 8.3le%+8.3lei % 8.3le%+8.3lei\n",
+           e[evn].x.real, e[evn].x.imag, e[evn].y.real,
+           e[evn].y.imag, e[evn].z.real, e[evn].z.imag);
+  }
+  return;
+}
+
 #endif // STATE_H

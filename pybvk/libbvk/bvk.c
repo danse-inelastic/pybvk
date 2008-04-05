@@ -272,9 +272,11 @@ int pdCompute(int nSites,int nq,QPoint* qs,
 
   int dim=3;
   double maxFreq=0;
+  //XXX: deep copy needed when not writing to files
+  EigenValue* ev2s=(EigenValue*)malloc(sizeof(EigenValue)*nq*dim*nSites);
   for(int f=0;f<nq*nSites*dim;f++){
-   om2s[f].v = sqrt(om2s[f].v)*dosScale;
-   if( om2s[f].v > maxFreq ){ maxFreq = om2s[f].v; }
+   ev2s[f].v = sqrt(om2s[f].v)*dosScale;
+   if( ev2s[f].v > maxFreq ){ maxFreq = ev2s[f].v; }
   }
   printf("Maximum frequency = %f\n",maxFreq);
 
@@ -290,7 +292,7 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   if(pols) { // use eigenvectors
     for(int q=0;q<nq;q++){
       for(int sd=0;sd<nSites*dim;sd++){
-        val=om2s[nSites*dim*q+sd].v;
+        val=ev2s[nSites*dim*q+sd].v;
         // assert(val>0,"value must be >0");
         val+=dBin/2.0;
         for(int s=0;s<nSites;s++){
@@ -306,7 +308,7 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   } else { //XXX: same as above, w/o the two withVecs lines
     for(int q=0;q<nq;q++){
       for(int sd=0;sd<nSites*dim;sd++){
-        val=om2s[nSites*dim*q+sd].v;
+        val=ev2s[nSites*dim*q+sd].v;
         // assert(val>0,"value must be >0");
         val+=dBin/2.0;
         for(int s=0;s<nSites;s++){

@@ -12,7 +12,7 @@ LDFLAGS	= $(IFLAGS)
 LIBS 	= -L$(LAPACK_DIR)/lib/atlas -llapack -L$(HOME)/lib -lg2c -lm
 #---------------------------------------------------
 SOURCES	= system.c bvk.c fwd.c h.c pd.c randomQs.c regularQs.c \
-          printQs.c printEVs.c
+          printQs.c printEVs.c printDOS.c
 OBJECTS	= bvk.o system.o
 #---------------------------------------------------
 
@@ -44,6 +44,7 @@ regularQs: base
 inspect: base
 	$(CC) $(LDFLAGS) -o printQs printQs.o $(OBJECTS) $(LIBS)
 	$(CC) $(LDFLAGS) -o printEVs printEVs.o $(OBJECTS) $(LIBS)
+	$(CC) $(LDFLAGS) -o printDOS printDOS.o $(OBJECTS) $(LIBS)
 
 clean:
 	rm -f a.out core *.o
@@ -53,6 +54,6 @@ clean:
 
 restore: clean
 	rm -f *.pyc _*.so 
-	rm -f fwd h pd randomQs regularQs printQs printEVs
+	rm -f fwd h pd randomQs regularQs printQs printEVs printDOS
 	rm -f system WeightedQ dos freqs Polarizations Omega2 DOS*
 	cd input-generators/syspy ; make restore ; cd ../..

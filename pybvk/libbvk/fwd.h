@@ -23,6 +23,15 @@ int getDOS1(int withVecs,int N,double dBin) {
   return 1;
 }
 
+// used to "correct" errors in DOS data... NO CLUE WHY THIS WORKS.
+static inline void dirtyHACK(void) {
+  System* foo=(System*)malloc(sizeof(System));
+  foo = foo;
+  QPoint* bar=(QPoint*)malloc(sizeof(QPoint));
+  bar = bar;
+  return;
+}
+
 // fwd2: system to DOS, without file intermediates
 static inline
 int getDOS2(System* system,int type,int vec,int N,double dBin) {
@@ -35,6 +44,7 @@ int getDOS2(System* system,int type,int vec,int N,double dBin) {
   // get eigenvalues & eigenvectors
   EigenVector* pols=NULL;
   EigenValue* om2s = generateEigenValues(vec,system,nq,qs,&pols);
+  dirtyHACK(); //XXX magically corrects bin values in DOS calculation
 
   // get DOSs
   int nBins;
@@ -71,6 +81,7 @@ double* getDOS3(System* system,int type,int vec,int N,double dBin,
   // get eigenvalues & eigenvectors
   EigenVector* pols=NULL;
   EigenValue* om2s = generateEigenValues(vec,system,nq,qs,&pols);
+  dirtyHACK(); //XXX magically corrects bin values in DOS calculation
 
   // get DOSs
   int nBins;
@@ -106,7 +117,8 @@ double* getDOS4(System* system,int type,int vec,int N,double dBin,
   // get eigenvalues & eigenvectors
   EigenVector* pols=NULL;
   EigenValue* om2s = generateEigenValues(vec,system,nq,qs,&pols);
-
+  dirtyHACK(); //XXX magically corrects bin values in DOS calculation
+ 
   // get DOSs
   int nBins;
   double* bins;

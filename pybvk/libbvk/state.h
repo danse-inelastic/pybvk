@@ -340,4 +340,61 @@ static inline void eigenPrint(EigenValue* v,EigenVector* e,
   return;
 }
 
+static inline void dosPrint(double* bins,int nBins,int bin) {
+  if(bin>=nBins || bin<0) {       
+    printf("BIN[%d] out of bounds\n", bin);
+  } else {
+    printf("BIN[%d] = %lf\n", bin, bins[bin]);
+  }
+  return;
+}
+
+static inline double* dosRead(char* fn,int* pnBins,double* pdbin) {
+  int nBins;
+  double dbin;
+  char title[64]; 
+  int version;
+  char comment[1024];
+  double* bins=NULL;
+  {
+    int io=open(fn,O_RDONLY);
+    read(io,&title,sizeof(title));
+    // if(nq==0) {
+    //   printf("ERROR: DOS file has no title?\n");
+    //   abort();
+    // }
+    read(io,&version,sizeof(version));
+    if(version!=1) {
+      printf("ERROR: DOS file is not version 1.\n");
+      abort();
+    }
+    read(io,&comment,sizeof(comment));
+    // if(nq==0) {
+    //   printf("ERROR: DOS file has no comment?\n");
+    //   abort();
+    // }
+    read(io,&nBins,sizeof(nBins));
+    if(nBins==0) {
+      printf("ERROR: DOS file says zero bins?\n");
+      abort();
+    }
+    read(io,&dbin,sizeof(dbin));
+    if(dbin==0) {
+      printf("ERROR: DOS file says zero dE?\n");
+      abort();
+    }
+    bins=(double*)malloc(sizeof(double)*nBins);
+    int ntr=sizeof(double)*nBins;
+    if(read(io,bins,ntr)!=ntr) {
+      printf("Read DOS incomplete\n");
+      abort();
+    }
+    close(io);
+  }
+  printf("Bins: %d bins at %lf width\n",nBins, dbin);
+  *pnBins=nBins;
+  *pdbin=dbin;
+  return bins;
+}
+
 #endif // STATE_H

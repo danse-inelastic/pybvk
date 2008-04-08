@@ -272,7 +272,6 @@ int pdCompute(int nSites,int nq,QPoint* qs,
 
   int dim=3;
   double maxFreq=0;
-  //XXX: deep copy needed when not writing to files
   EigenValue* ev2s=(EigenValue*)malloc(sizeof(EigenValue)*nq*dim*nSites);
   for(int f=0;f<nq*nSites*dim;f++){
    ev2s[f].v = sqrt(om2s[f].v)*dosScale;
@@ -528,6 +527,8 @@ double* generateDOS(int nSites,int nq,QPoint* qs,
   double* total;
   // NOTE: if not using eigenvectors, assume they are passed in as NULL
   int nBins=pdCompute(nSites,nq,qs,om2s,pols,dBin,&bins,&total);
+  printf("number of bins  = %d\n",nBins);
+  printf("number of sites = %d\n",nSites);
 
   *nmbins = nBins;
   *pdbins = bins;

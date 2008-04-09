@@ -4,8 +4,8 @@
 #include "system.h"
 #include "state.h"
 
-// main: get selected qpoints
-// assume "qpoints" generated
+// main: get selected bins
+// assume "DOS" generated
 int main(int argc,char *argv[]) {
   char filename[]="DOS";
   if(argc>1) {

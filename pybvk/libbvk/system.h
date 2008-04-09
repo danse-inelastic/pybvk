@@ -186,6 +186,65 @@ static inline void systemWrite(char* fn,System* system) {
   close(io);
 }
 
+static inline void cellPrint(System* s) {
+  printf("CELL 3*[x,y,z]: \n ");
+  vectorDump(&s->cell->a);
+  printf("\n ");
+  vectorDump(&s->cell->b);
+  printf("\n ");
+  vectorDump(&s->cell->c);
+  printf("\n");
+  return;
+}
+
+static inline void atomPrint(System* s,int atom) {
+  if(atom>=s->c->atoms || atom<0) { 
+    printf("ATOM[%d] out of bounds\n", atom);
+  } else {
+    printf("ATOM[%d] = %s, %le\n", atom,
+           s->atoms[atom].comment, s->atoms[atom].mass);
+  }
+  return;
+}
+
+static inline void sitePrint(System* s,int site) {
+  if(site>=s->c->sites || site<0) { 
+    printf("SITE[%d] out of bounds\n", site);
+  } else {
+    printf("SITE[%d] (x,y,z): ", site);
+    vectorDump(&s->sites[site].v);
+    printf(", atom(%d), pad(%d)\n",
+           s->sites[site].atomType, s->sites[site]._padding);
+  }
+  return;
+}
+
+static inline void cbondPrint(System* s,int bond) {
+  if(bond>=s->c->cbonds || bond<0) { 
+    printf("CBOND[%d] out of bounds\n", bond);
+  } else {
+    printf("CBOND[%d] (x,y,z),[fct]: ", bond);
+    printf("atom(%d,%d)\n", s->cbonds[bond].fromAtomType,
+                            s->cbonds[bond].toAtomType);
+    vectorDump(&s->cbonds[bond].v);
+    printf("\n");
+    matrixDump(&s->cbonds[bond].fct);
+    printf("\n");
+  }
+  return;
+}
+
+static inline void symPrint(System* s,int sym) {
+  if(sym>=s->c->symmetries || sym<0) { 
+    printf("SYM[%d] out of bounds\n", sym);
+  } else {
+    printf("SYM[%d]: ", sym);
+    matrixDump(&s->symmetries[sym].m);
+    printf("\n");
+  }
+  return;
+}
+
 extern int systemComputeBonds(System* system);
 
 #endif // SYSTEM_H

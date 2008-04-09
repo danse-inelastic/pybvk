@@ -169,6 +169,23 @@ static inline System* systemRead(char* fn) {
   return self;
 }
 
+static inline void systemWrite(char* fn,System* system) {
+  int io=open(fn,O_TRUNC|O_CREAT|O_WRONLY,0644);
+  Counts* c = system->c;  
+  write(io,c,sizeof(Counts));
+  Cell* cell = system->cell;
+  write(io,cell,sizeof(Cell));
+  Atom* atoms = system->atoms;
+  write(io,atoms,c->atoms*sizeof(Atom));
+  Site* sites = system->sites;
+  write(io,sites,c->sites*sizeof(Site));
+  CanonicalBond* cbonds = system->cbonds;
+  write(io,cbonds,c->cbonds*sizeof(CanonicalBond));
+  Symmetry* symmetries = system->symmetries;
+  write(io,symmetries,c->symmetries*sizeof(Symmetry));
+  close(io);
+}
+
 extern int systemComputeBonds(System* system);
 
 #endif // SYSTEM_H

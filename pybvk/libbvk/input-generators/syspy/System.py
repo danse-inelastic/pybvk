@@ -4,6 +4,7 @@ from struct import pack,unpack,calcsize
 
 Ldub = calcsize('=d')
 Lint = calcsize('=i')
+Lstr = calcsize('=s')
 
 def write(cell,atoms,sites,bonds,symsfile,symsdir='syms',filename="system"):
   a,s,b = fatAll(atoms,sites,bonds)
@@ -21,6 +22,42 @@ def write(cell,atoms,sites,bonds,symsfile,symsdir='syms',filename="system"):
   f.write( F[Lint:] )
   f.close()
   return
+
+def read(filename='system'):
+  F=open(filename,'r').read()
+  ubound = 4*Lint
+  a,s,b,sy = unpack('=4i',F[:ubound])
+  print filename,"contains: 1 cell,",a,"atoms,",s,"sites,", \
+        b,"bonds,",sy,"symmetries"
+  lbound = ubound
+  ubound += 9*Ldub
+  cell = unpack('=9d',F[lbound:ubound])
+  #print cell
+  atoms = []
+  for i in range(a):
+    lbound = ubound
+    ubound += 64*Lstr + Ldub
+    atom,mass = unpack('=64sd',F[lbound:ubound])
+    atom = atom.rstrip('\x00')
+    atoms.append((atom,mass))
+  #print atoms
+  sites = []
+  for i in range(s):
+    lbound = ubound
+    ubound += 3*Ldub + 2*Lint
+    site = unpack('=3d2i',F[lbound:ubound])
+    sites.append(site)
+  #print sites
+  bonds = []
+  for i in range(b):
+    lbound = ubound
+    ubound += 2*Lint + 3*Ldub + 9*Ldub
+    bond = unpack('=2i3d9d',F[lbound:ubound])
+    bonds.append(bond)
+  #print bonds
+  symmetries = F[ubound:]  # not unpacked
+  #print 'read <<symmetries>>'
+  return cell,atoms,sites,bonds
 
 def axial(R,r,t):
   RdotR = float( R[0]*R[0] + R[1]*R[1] + R[2]*R[2] )

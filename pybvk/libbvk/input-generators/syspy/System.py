@@ -55,9 +55,14 @@ def read(filename='system'):
     bond = unpack('=2i3d9d',F[lbound:ubound])
     bonds.append(bond)
   #print bonds
-  symmetries = F[ubound:]  # not unpacked
-  #print 'read <<symmetries>>'
-  return cell,atoms,sites,bonds
+  symmetry = []
+  for i in range(sy):
+    lbound = ubound
+    ubound += 9*Ldub
+    sym = unpack('=9d',F[lbound:ubound])
+    symmetry.append(sym)
+  #print symmetry
+  return cell,atoms,sites,bonds,symmetry
 
 def axial(R,r,t):
   RdotR = float( R[0]*R[0] + R[1]*R[1] + R[2]*R[2] )

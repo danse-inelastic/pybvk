@@ -319,12 +319,14 @@ int pdCompute(int nSites,int nq,QPoint* qs,
       }
     }
   }
+  free( ev2s );
 
   double* total=(double*)malloc(sizeof(double)*nBins);
   for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
       bins[nBins*s + b] /= sums[s]*dBin;
       total[b] += bins[nBins*s + b]/(double)nSites;
   }}
+  free( sums );
 
   *dbins=bins;
   *dtotal=total;

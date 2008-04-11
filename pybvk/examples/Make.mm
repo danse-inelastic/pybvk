@@ -19,7 +19,8 @@ PROJ_OUTS = DOS* Omega2 Polarizations WeightedQ system g.py syms
 PROJ_CLEAN += $(PROJ_CPPDEMO) $(PROJ_OUTS)
 
 PROJ_PYDEMO =
-PROJ_CPPDEMO = fwd h pd randomQs regularQs gpy
+PROJ_CPPDEMO = fwd h pd randomQs regularQs printQs \
+               printEVs printDOS printSys gpy
 PROJ_DEMO = $(PROJ_PYDEMO) $(PROJ_CPPDEMO)
 PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk -llapack
 #--------------------------------------------------------------------------
@@ -51,6 +52,18 @@ randomQs: system $(SRC_LIBDIR)/randomQs.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
 
 regularQs: system $(SRC_LIBDIR)/regularQs.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
 	$(CXX) $(CXXFLAGS) $(LCXXFLAGS) -o $@ $(SRC_LIBDIR)/regularQs.c $(PROJ_LIBRARIES)
+
+printQs: system $(SRC_LIBDIR)/printQs.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
+	$(CXX) $(CXXFLAGS) $(LCXXFLAGS) -o $@ $(SRC_LIBDIR)/printQs.c $(PROJ_LIBRARIES)
+
+printEVs: system $(SRC_LIBDIR)/printEVs.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
+	$(CXX) $(CXXFLAGS) $(LCXXFLAGS) -o $@ $(SRC_LIBDIR)/printEVs.c $(PROJ_LIBRARIES)
+
+printDOS: system $(SRC_LIBDIR)/printDOS.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
+	$(CXX) $(CXXFLAGS) $(LCXXFLAGS) -o $@ $(SRC_LIBDIR)/printDOS.c $(PROJ_LIBRARIES)
+
+printSys: system $(SRC_LIBDIR)/printSys.c $(BLD_LIBDIR)/libbvk.$(EXT_SAR)
+	$(CXX) $(CXXFLAGS) $(LCXXFLAGS) -o $@ $(SRC_LIBDIR)/printSys.c $(PROJ_LIBRARIES)
 
 gpy:
 	$(CP) $(SRC_LIBDIR)/g.py .

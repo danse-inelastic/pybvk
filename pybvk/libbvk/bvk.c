@@ -281,6 +281,7 @@ int pdCompute(int nSites,int nq,QPoint* qs,
 
   int nBins=(int)(maxFreq/dBin)+10;
   double* bins=(double*)malloc(sizeof(double)*nBins*nSites);
+  for(int i=0;i<nSites*nBins;i++){ bins[i] = 0.0; }
 
   double* sums=(double*)malloc(sizeof(double)*nSites);
   for(int i=0;i<nSites;i++){ sums[i] = 0.0; }
@@ -322,6 +323,8 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   free( ev2s );
 
   double* total=(double*)malloc(sizeof(double)*nBins);
+  for(int b=0;b<nBins;b++){ total[b] = 0.0; }
+
   for(int s=0;s<nSites;s++){ for(int b=0;b<nBins;b++){
       bins[nBins*s + b] /= sums[s]*dBin;
       total[b] += bins[nBins*s + b]/(double)nSites;

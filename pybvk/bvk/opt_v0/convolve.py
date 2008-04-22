@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Takes however many DOS in c-binary format and 1 instrument resolution file 
 # and convolves each DOS with the resolution function. Output to *.conv

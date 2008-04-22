@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Quick linearly interpolating DOS rebinner.
 # Error propagation is _totally_ wrong!

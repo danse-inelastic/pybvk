@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Take a dictionary with fcsnames and fcs, produce a System file.
 def toSys(Pdict,fileIn,fileOut):

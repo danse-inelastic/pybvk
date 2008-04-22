@@ -9,14 +9,14 @@ import sys
 import numpy
 nar = numpy.add.reduce
 
-from struct import pack,unpack,calcsize
-intSize = calcsize('<i')
-dubSize = calcsize('<d')
-strSize = calcsize('<s')
-version=1
-
 def read(filename='DOS'):
   """Takes filename, returns a tuple with information and DOS as a numpy."""
+  from struct import pack,unpack,calcsize
+  intSize = calcsize('<i')
+  dubSize = calcsize('<d')
+  strSize = calcsize('<s')
+  version=1
+
   f=open(filename,'r').read()
   i = 0
   filetype, = unpack('<64s',f[i:i+64*strSize])          ; i += 64*strSize
@@ -30,18 +30,7 @@ def read(filename='DOS'):
   return (filetype.strip('\x00'),version,comment.strip('\x00')),E,DOS
 
 
-dosFiles = sys.argv[1:-1]
-resFile  = sys.argv[-1]
-
-D = []
-
-for i in dosFiles:
-  D.append( read(filename=i) )
-
-import io
-Res = io.load(resFile)
-
-def conv(D,Res):
+def convolve(D,Res):
   E = Res[0]
   R = Res[1]
   d = numpy.zeros(E.shape)
@@ -54,9 +43,23 @@ def conv(D,Res):
   return E,res
 
 
-R = []
-for d in range(len(D)):
-  er,rr = conv(D[d],Res)
-  R.append( (er,rr) )
-  io.write( er, rr, numpy.zeros(rr.shape), dosFiles[d]+".conv" )
+def convolveDOS(dosFiles,resFile):
+  D = []
+  for i in dosFiles:
+    D.append( read(filename=i) )
 
+  import io
+  Res = io.load(resFile)
+
+  R = []
+  for d in range(len(D)):
+    er,rr = convolve(D[d],Res)
+    R.append( (er,rr) )
+    io.write( er, rr, numpy.zeros(rr.shape), dosFiles[d]+".conv" )
+  return
+
+
+if __name__ == '__main__':
+  dosFiles = sys.argv[1:-1]
+  resFile  = sys.argv[-1]
+  convolveDOS(dosFiles,resFile)

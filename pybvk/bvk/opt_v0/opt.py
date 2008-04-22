@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
 import os
-os.system("date")
-
-from scipy.optimize import fmin_powell
 import numpy, io, template2sys as t2s
 numpy.set_printoptions(precision=16)
 nar = numpy.add.reduce
@@ -25,6 +22,7 @@ def dictFromLists(a,b):
 
 # make the function that takes fcs and produces a DOS.
 def make_getDOS(ps,fcnames,sysDir,sysTemplate,sysName,binWidth,resFile):
+  global withVecs, node
   runBvK      = " ".join(["b",node,sysName,str(withVecs),str(binWidth)])
   convolve    = " ".join(["convolve.py","DOS",resFile])
   def getDOS(fcs):
@@ -36,7 +34,7 @@ def make_getDOS(ps,fcnames,sysDir,sysTemplate,sysName,binWidth,resFile):
     os.system(convolve)
     E,D,R = io.load("DOS.conv")
     if D[0] < 0.0:
-      print "That's fucking negative, dude!"
+      print "That's negative, dude!"
       D = numpy.zeros( e.shape ) + 1e20
     else:
       E,D,R = normalize(E,D,R)
@@ -53,6 +51,7 @@ def make_penalty(d,getDOS):
 def l2optimizer(penalty,fcs,maxIter):
     """l2optimizer() sets up the optimization of penalty() using Powell's 
        level set method.  """
+    from scipy.optimize import fmin_powell
     optimal = fmin_powell(penalty,fcs,full_output=0,maxiter=maxIter)
     print optimal
 
@@ -68,31 +67,20 @@ def setupFcs(fcs,randomize):
   R =  ( 0.5 - numpy.random.random(len(fcs)) )*(2.0*randomize)
   return (  ( 1.0 + R ) * fcs ).tolist()
 
-#==============================================================================
-# User input here:
-#-----------------------------------------------------------------------------
-fcnames = ['FC01', 'FC02', 'FC03', 'FC04', 'FC05', 'FC06', 'FC07', 'FC08', \
-           'FC09', 'FC10', 'FC11', 'FC12', 'FC13']
-fcs     = [ 16.88,  15.01,  14.63,   0.55,   0.92,   0.69,  -0.57,  -0.12, \
-            0.007,   0.03,   0.52,  -0.29,   0.32]
+def run():
+  global fcnames, fcs, expFile, resFile
+  global sysDir, sysTemplate, sysName
+  global maxIter, randomize
+  ps = []
+  d,binWidth = setupDos(expFile,randomize) 
+  fcs = setupFcs(fcs,randomize)
+  getDOS = make_getDOS(ps,fcnames,sysDir,sysTemplate,sysName,binWidth,resFile)
+  penalty = make_penalty(d,getDOS)
+  l2optimizer(penalty,fcs,maxIter)
+  return
 
-expFile     = "dos.exp"         # in THz, constant binwidth
-resFile     = "instrument.res"  # in THz, same binwidth as DOS, from 
-                                # negative last data value to last data value.
-sysDir      = "./sys-gen/"
-sysTemplate = "myFe.tplt"
-sysName     = "myFe"
-withVecs    = 0
-node        = "n00"
-maxIter     = 100
-randomize   = 0.3               # Apply 30% random noise to initial fcs
-#==============================================================================
-
-ps = []
-d,binWidth = setupDos(expFile,randomize) 
-fcs = setupFcs(fcs,randomize)
-getDOS = make_getDOS(ps,fcnames,sysDir,sysTemplate,sysName,binWidth,resFile)
-penalty = make_penalty(d,getDOS)
-l2optimizer(penalty,fcs,maxIter)
-
-os.system("date")
+if __name__ == '__main__':
+  os.system("date")
+  from input import *  # get user input
+  run()
+  os.system("date")

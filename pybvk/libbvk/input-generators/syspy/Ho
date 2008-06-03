@@ -4,6 +4,7 @@ import System
 from math import sqrt
 
 
+# a and c are lattice parameters for hex.
 a=sqrt(3)
 c=(5.616/3.577)*a
 m=2.7387318e-25

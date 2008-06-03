@@ -6,6 +6,7 @@ import System
 from math import sqrt
 
 
+# a and c are lattice parameters for hex
 a=sqrt(3)
 c=(5.696/3.599)*a              # Article,  page 3943
 # c=(5.70/3.60)*a                  # LB 

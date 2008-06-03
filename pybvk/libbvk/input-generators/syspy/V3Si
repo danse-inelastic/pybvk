@@ -4,6 +4,7 @@ import System
 from math import sqrt
 import numpy as np
 
+# a is the lattice parameter for A15 cell.
 a=4.7089800000
 m1=8.4590334e-26  # V atomic mass in kg
 m2=4.6637061e-26  # Si atomic mass in kg

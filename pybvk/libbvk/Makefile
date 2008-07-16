@@ -1,5 +1,5 @@
 #LAPACK_DIR = /tmp/opt/acml-3.6.0/gnu64
-##LAPACK_DIR = /opt/acml4.0.1/gfortran64_int64
+##LAPACK_DIR = /tmp/opt/acml4gf-4.1.0/gfortran64
 LAPACK_DIR = $(HOME)
 
 CC	= gcc
@@ -8,7 +8,7 @@ CFLAGS 	= $(IFLAGS) -std=gnu99 -ffast-math -funroll-all-loops -Wall -O3
 LDFLAGS	= $(IFLAGS)
 
 #LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lg2c -lm
-##LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lg2c -lm -lgfortran
+##LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lm -lgfortran
 LIBS 	= -L$(LAPACK_DIR)/lib/atlas -llapack -L$(HOME)/lib -lg2c -lm
 #---------------------------------------------------
 SOURCES	= system.c bvk.c fwd.c h.c pd.c randomQs.c regularQs.c \

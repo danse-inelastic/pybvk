@@ -116,10 +116,12 @@ def closeSyms(S):
 
 
 from struct import pack
+import os
 
 def writeSyms(S,filename='syms',symsdir='./syms'):
   numS = len(S)
   # ---
+  os.system('mkdir -p '+symsdir)
   f = open(symsdir+'/'+filename,'w')
   # numbers
   f.write(pack('=i', numS)) # number of symmetries

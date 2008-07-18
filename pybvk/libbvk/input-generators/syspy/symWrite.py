@@ -17,17 +17,17 @@ elif symmetry == 'cubic':
 elif symmetry == 'fct':  # Face Centered Tetragonal:
   S = [ C_4z, C_2x, I ]
 #=============================================================================
-elif symmetry == 't': # T_h (???)
+elif symmetry == 'tet': # T_h (tetrahedral?)
   S = [ C_4y, C_4x ]
 #=============================================================================
 elif symmetry == 'identity':
-  S = []
+  S = [ ]
 #=============================================================================
 else:  # set to identity
   print "Warning: '%s' not recognized" % symmetry
   print "setting symmetry to 'identity'"
   symmetry = 'identity'
-  S = []
+  S = [ ]
 #-----------------------------------------------------------------------------
 
 S = closeSyms(S)

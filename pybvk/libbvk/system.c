@@ -4,6 +4,9 @@
 #include "system.h"
 #include "dinaw.h"
 
+// (un)comment the following line for debugging output
+//#define debug
+
 #ifdef __amd64__
   #include <acml.h>
 #else
@@ -28,6 +31,7 @@ static int _computeBonds(System* system) {
     bonds=system->bonds=(Bond*)malloc(system->nBonds*sizeof(Bond));
     dynamicalMatrixAllocate(selfForces,3*c->sites);
 
+#ifdef debug
     for(int n=0;n<c->sites;n++) {
       Site* site=&sites[n];
       printf("Site %d: atom %d at ",n,site->atomType);
@@ -37,9 +41,11 @@ static int _computeBonds(System* system) {
     for(int b=0;b<c->cbonds;b++) {
       CanonicalBond* bond=&cbonds[b];
       printf("CBond: %d->%d ",bond->fromAtomType,bond->toAtomType);
-      vectorDump(&bond->v); printf(" FCT:\n");
+      vectorDump(&bond->v);
+      printf(" FCT:\n");
       matrixDump(&bond->fct);
     }
+#endif // debug
   }
 
   Matrix cellM={ cell->a.x,cell->b.x,cell->c.x,
@@ -157,14 +163,18 @@ static int _computeBonds(System* system) {
 //        if(fromSite-sites>toSite-sites) continue;
 
         if(bonds) {
+#ifdef debug
           printf("  bond from %s ",atoms[fromSite->atomType].comment);
           vectorDump(&fromSite->v);
           printf(" to %s ",atoms[toSite->atomType].comment);
+#endif // debug
           Vector toV; memcpy(&toV,&fromSite->v,sizeof(toV));
           mvMultiply(&sbondv,&symmetry->m,&bond->v);
           vectorScaleAndAccumulate(&toV,&sbondv,1.0);
+#ifdef debug
           vectorDump(&toV);
           printf("\n");
+#endif // debug
 
           bonds->sqrtmfromSqrtmtoInvNeg=
             -1.0/sqrt(atoms[fromSite->atomType].mass*

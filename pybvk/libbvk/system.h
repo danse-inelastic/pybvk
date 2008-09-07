@@ -10,6 +10,9 @@
 #include "vector.h"
 #include "dinaw.h"
 
+// (un)comment the following line for debugging output
+//#define debug
+
 // The input files:
 //
 //   "the cell" == the thing that's tiled to fill space, described by three
@@ -153,8 +156,10 @@ static inline System* systemRead(char* fn) {
   off_t at=lseek(io,0,SEEK_CUR);
   DIE(at!=lseek(io,0,SEEK_END),"not at eof after read system");
   close(io);
+#ifdef debug
   printf("System: 1 Cell, %d Atoms, %d Sites, %d CanonicalBonds, %d "
          "Symmetries\n",c.atoms,c.sites,c.cbonds,c.symmetries);
+#endif // debug
 
   char* system=self->buf;
   self->c=(Counts*)system; system+=sizeof(Counts);

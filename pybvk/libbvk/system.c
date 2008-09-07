@@ -266,6 +266,8 @@ static int _computeBonds(System* system) {
 
 int systemComputeBonds(System* system) {
   system->nBonds=_computeBonds(system);
+#ifdef debug
   printf("There are %d bonds\n",system->nBonds);
+#endif // debug
   return _computeBonds(system);
 }

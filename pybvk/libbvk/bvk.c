@@ -7,6 +7,9 @@
 #include "vector.h"
 #include "bvk.h"
 
+// (un)comment the following line for debugging output
+//#define debug
+
 #ifdef __amd64__
   #include <acml.h>
 #else
@@ -184,9 +187,13 @@ int bvkCompute(System* system,int nq,QPoint* qs,
 
   Bond* bonds=system->bonds;
 
+#ifdef debug
   int progress=0;
+#endif // debug
   for(int qnum=0;qnum<nq;qnum++) {
+#ifdef debug
     if(progress++%10000==0) printf(".");
+#endif // debug
     QPoint* q=qs+qnum;
     dynamicalMatrixCopy(&d,&system->selfForcesD);
 
@@ -259,9 +266,11 @@ int bvkCompute(System* system,int nq,QPoint* qs,
   struct timeval finish;
   gettimeofday(&finish,NULL);
 
+#ifdef debug
   long us=finish.tv_usec-start.tv_usec+
           (finish.tv_sec-start.tv_sec)*1000000;
   printf("\n%d q in %ld us: %ld q/s\n",nq,us,(long)(1000000.0*nq/us));
+#endif // debug
 
   return nq*d.n;
 }
@@ -277,7 +286,9 @@ int pdCompute(int nSites,int nq,QPoint* qs,
    ev2s[f].v = sqrt(om2s[f].v)*dosScale;
    if( ev2s[f].v > maxFreq ){ maxFreq = ev2s[f].v; }
   }
+#ifdef debug
   printf("Maximum frequency = %f\n",maxFreq);
+#endif // debug
 
   int nBins=(int)(maxFreq/dBin)+10;
   double* bins=(double*)malloc(sizeof(double)*nBins*nSites);
@@ -346,7 +357,9 @@ int pd(int withVecs,double dBin) {
   int nq=0;
   QPoint* qs=qpointRead("WeightedQ",&nq);
   EigenValue* om2s = eigenvalueRead("Omega2",&nq); // Should this affect nq?
+#ifdef debug
   printf("%d Q points\n",nq);
+#endif // debug
 
   double* bins;
   double* total;
@@ -361,8 +374,10 @@ int pd(int withVecs,double dBin) {
     nBins=pdCompute(nSites,nq,qs,om2s,NULL,dBin,&bins,&total);
     //XXX: total=generateDOS(nSites,nq,qs,om2s,NULL,dBin,&nBins,&bins);
   }
+#ifdef debug
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);
+#endif // debug
 
   if(withVecs == 1){
     partialDosWrite(nSites,nBins,dBin,bins);
@@ -402,7 +417,9 @@ int h(int withVecs) {
 
   int nq;
   QPoint* qs=qpointRead("WeightedQ",&nq);
+#ifdef debug
   printf("%d Q points\n",nq);
+#endif // debug
 
   //XXX: Better to return eigenvector or eigenvalue? (see bvk.h)
   //EigenValue* vs;
@@ -412,7 +429,7 @@ int h(int withVecs) {
   //XXX: Better to merge "generateEigenValues" with "bvkCompute"?
 
   if(withVecs == 1){ 
-    printf("You want vectors!\n");
+    //printf("You want vectors!\n");
     eigenvectorWrite("Polarizations",nq,nSites,es);
   }
   qpointWrite("WeightedQ",nq,qs);
@@ -428,7 +445,9 @@ int Qps(int type,int N) {
 
   int nq;
   QPoint* qs=generateQpoints(type,system,&nq,N);
+#ifdef debug
   printf("%d Q points\n",nq);
+#endif // debug
 
   qpointWrite("WeightedQ",nq,qs);
   return 1;
@@ -532,8 +551,10 @@ double* generateDOS(int nSites,int nq,QPoint* qs,
   double* total;
   // NOTE: if not using eigenvectors, assume they are passed in as NULL
   int nBins=pdCompute(nSites,nq,qs,om2s,pols,dBin,&bins,&total);
+#ifdef debug
   printf("number of bins  = %d\n",nBins);
   printf("number of sites = %d\n",nSites);
+#endif // debug
 
   *nmbins = nBins;
   *pdbins = bins;

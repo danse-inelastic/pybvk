@@ -51,6 +51,6 @@ int main(int argc,char *argv[]) {
       eigenvectorWrite("Polarizations",nq,nSites,pols);
     }
   }                                           // ...fwd4
-  printf("Ssee program? iss kap\\\"ut.\n");
+  //printf("Ssee program? iss kap\\\"ut.\n");
   return 1;
 }

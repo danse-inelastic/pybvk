@@ -1,4 +1,7 @@
 # -*- Makefile -*-
+# -----------------------------------------
+# To compile using acml, use this local.def
+# -----------------------------------------
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -11,18 +14,17 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+#
+# Local (project) definitions
+#
+
 # C++
-    
-    SRC_LIBDIR = ../libbvk
-    SRC_SYSDIR = $(SRC_LIBDIR)/input-generators/syspy
 
-# lapack (add the location for liblapack.so)
+    EXT_CXX = c
+    PROJ_CXX_INCLUDES += $(ACML_INCDIR)
 
-    PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas -llapack
-
-# Python
-
-    PYTHONPATH += $(SRC_SYSDIR)
+    PROJ_CXX_FLAGS += $(CXX_SOFLAGS)
+    PROJ_LCXX_FLAGS += $(LCXX_SARFLAGS)
 
 # version
 # $Id$

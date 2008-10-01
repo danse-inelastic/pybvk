@@ -22,7 +22,7 @@ PROJ_PYDEMO =
 PROJ_CPPDEMO = fwd h pd randomQs regularQs printQs \
                printEVs printDOS printSys gpy
 PROJ_DEMO = $(PROJ_PYDEMO) $(PROJ_CPPDEMO)
-PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk -llapack
+PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk
 #--------------------------------------------------------------------------
 #
 all: $(PROJ_DEMO)

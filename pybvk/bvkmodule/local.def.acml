@@ -1,0 +1,23 @@
+# -*- Makefile -*-
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# Mike McKerns
+# mmckerns@caltech.edu
+# (C) 2008 All Rights Reserved
+# 
+# <LicenseText>
+# 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+# C++
+    PROJ_CXX_INCLUDES += ..
+
+    
+# ACML
+    PROJ_LCXX_FLAGS += -I $(ACML_INCDIR) -L $(ACML_LIBDIR) -l acml -l acml_mv
+
+# version
+# $Id$
+# End of file

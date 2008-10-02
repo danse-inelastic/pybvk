@@ -18,10 +18,12 @@ BUILD_DIRS = \
     libbvk \
     bvkmodule \
     bvk \
+    etc \
 
 OTHER_DIRS = \
     tests \
-    examples
+    examples \
+    apps \
 
 RECURSE_DIRS = $(BUILD_DIRS) $(OTHER_DIRS)
 

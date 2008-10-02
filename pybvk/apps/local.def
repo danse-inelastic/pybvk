@@ -11,21 +11,6 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
-# C++
-    
-    SRC_LIBDIR = ../libbvk
-    SRC_SYSDIR = $(SRC_LIBDIR)/input-generators/syspy
-
-# ACML
-    PROJ_LCXX_FLAGS += -I $(ACML_INCDIR) -L $(ACML_LIBDIR) -l acml -l acml_mv
-
-# lapack (add the location for liblapack.so)
-
-    #PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
-
-# Python
-
-    PYTHONPATH += $(SRC_SYSDIR)
 
 # version
 # $Id$

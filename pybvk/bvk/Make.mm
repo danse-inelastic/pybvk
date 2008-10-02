@@ -13,9 +13,18 @@
 PROJECT = bvk
 PACKAGE = bvk
 
+BUILD_DIRS = \
+	input_generators \
+
+OTHER_DIRS = \
+
+RECURSE_DIRS = $(BUILD_DIRS) $(OTHER_DIRS)
+
+
 #--------------------------------------------------------------------------
 #
 all: export
+	BLD_ACTION="export" $(MM) recurse
 
 #--------------------------------------------------------------------------
 #

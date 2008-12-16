@@ -5,13 +5,13 @@
 # bvkdisp system-python-file N-kpts-in-1D
 
 
-def run(systempy, N):
+def run(systempy, N, df):
     Vecs = 1
     cmds = [
         'python %s' % systempy,
         'bvkregularQs %s' % N,
         'bvkdisps %s' % Vecs,
-        #'bvkpartialdos %s %s' % (Vecs, df), 
+        'bvkpartialdos %s %s' % (Vecs, df), 
         ]
     print cmds
     return spawn(cmds)
@@ -35,11 +35,11 @@ def main():
         default = 10,
         help="Number of k points in 1D for sampling reciprocal space",
         )
-    #parser.add_option(
-    #    "-d", "--df", dest="df",
-    #    default = 0.1,
-    #    help="frequency axis bin size(THz)",
-    #    )
+    parser.add_option(
+       "-d", "--df", dest="df",
+       default = 0.1,
+       help="frequency axis bin size(THz) for DOS",
+       )
 
     (options, args) = parser.parse_args()
     if len(args) != 1:
@@ -47,8 +47,8 @@ def main():
 
     systempy = args[0]
     N = int(options.N)
-    #df = float(options.df)
-    return run(systempy, N)
+    df = float(options.df)
+    return run(systempy, N, df)
     
 if __name__ == "__main__":
     main()

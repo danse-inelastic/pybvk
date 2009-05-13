@@ -5,11 +5,12 @@
 # bvkdisp system-python-file N-kpts-in-1D
 
 
-def run(systempy, N, df):
+def run(systempy, N, df, inclusive=1):
+    "inclusive: when generating regular Qs, include points on the edge (begin and end)"
     Vecs = 1
     cmds = [
         'python %s' % systempy,
-        'bvkregularQs %s' % N,
+        'bvkregularQs %s %s' % (N, inclusive),
         'bvkdisps %s' % Vecs,
         'bvkpartialdos %s %s' % (Vecs, df), 
         ]

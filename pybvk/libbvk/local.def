@@ -1,4 +1,7 @@
 # -*- Makefile -*-
+# -----------------------------------------
+# To compile using acml, use this local.def
+# -----------------------------------------
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -18,6 +21,8 @@
 # C++
 
     EXT_CXX = c
+    PROJ_CXX_INCLUDES += $(ACML_INCDIR)
+    PROJ_CXX_DEFINES += debug
 
     PROJ_CXX_FLAGS += $(CXX_SOFLAGS)
     PROJ_LCXX_FLAGS += $(LCXX_SARFLAGS)

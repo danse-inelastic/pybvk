@@ -62,17 +62,30 @@ static inline QPoint* qpointRead(char* fn,int* pnq) {
 // XXX: If you ever read qs, remember your generators might need fixing to
 //      scale the q vectors by 2Pi
 // XXX: These weights are probably wrong.
-static inline QPoint* qpointGenRegularInRCell(System* system,int* pnq,int n) {
+static inline QPoint* qpointGenRegularInRCell(System* system,int* pnq,int n,bool inclusive=0) {
+  double division;
+  int startindex;
   *pnq=n*n*n;
   Cell* rcell=&system->rcell;
   QPoint* qs=(QPoint*)malloc(*pnq*sizeof(QPoint));
   QPoint* qc=qs;
+
+  if (inclusive) {
+    division = 1./(n-1);
+    startindex = 0;
+  }
+  else {
+    division = 1./(n+1);
+    startindex = 1;
+  }
+
   for(int x=0;x<n;x++)
     for(int y=0;y<n;y++)
       for(int z=0;z<n;z++) {
-        double a=(double)(x+1)/(double)(n+1);
-        double b=(double)(y+1)/(double)(n+1);
-        double c=(double)(z+1)/(double)(n+1);
+        
+        double a=(double)(x+startindex)*division;
+        double b=(double)(y+startindex)*division;
+        double c=(double)(z+startindex)*division;
         qc->v.x=rcell->a.x*a+rcell->b.x*b+rcell->c.x*c;
         qc->v.y=rcell->a.y*a+rcell->b.y*b+rcell->c.y*c;
         qc->v.z=rcell->a.z*a+rcell->b.z*b+rcell->c.z*c;

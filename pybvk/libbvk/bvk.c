@@ -12,6 +12,7 @@
 
 #ifdef __amd64__
   #include <acml.h>
+  #include <acml_mv.h>
 #else
   #include "mylapack.h"
   #define fastsincos sincos
@@ -218,7 +219,7 @@ int bvkCompute(System* system,int nq,QPoint* qs,
 
     double v[d.n];
     memset(&v,0,sizeof(double)*d.n);
-    int info=-1;
+    long int info=-1;
     // Fill array in C order in upper triangle and call with 'L' and it works
     #ifdef __amd64__
       zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
@@ -282,8 +283,21 @@ int pdCompute(int nSites,int nq,QPoint* qs,
   int dim=3;
   double maxFreq=0;
   EigenValue* ev2s=(EigenValue*)malloc(sizeof(EigenValue)*nq*dim*nSites);
+#ifdef debug
+  printf("ev2s=%p, size=%d\n", ev2s, sizeof(EigenValue)*nq*dim*nSites);
+#endif
+  
+  double omega;
   for(int f=0;f<nq*nSites*dim;f++){
-   ev2s[f].v = sqrt(om2s[f].v)*dosScale;
+   omega = om2s[f].v;
+   if (omega<0) {
+#ifdef debug
+    printf("** Warning: negative frequency. f=%d, omega=%g\n", f, omega);
+#endif
+    omega = 0;
+   }
+
+   ev2s[f].v = sqrt(omega)*dosScale;
    if( ev2s[f].v > maxFreq ){ maxFreq = ev2s[f].v; }
   }
 #ifdef debug
@@ -292,18 +306,23 @@ int pdCompute(int nSites,int nq,QPoint* qs,
 
   int nBins=(int)(maxFreq/dBin)+10;
   double* bins=(double*)malloc(sizeof(double)*nBins*nSites);
+#ifdef debug
+  printf("bins size=%d, bins=%p\n", sizeof(double)*nBins*nSites, bins);
+#endif
   for(int i=0;i<nSites*nBins;i++){ bins[i] = 0.0; }
 
   double* sums=(double*)malloc(sizeof(double)*nSites);
   for(int i=0;i<nSites;i++){ sums[i] = 0.0; }
 
+
   double weight=0;
   double val=0;
-  int index=0;
+  int index=0, index1;
   if(pols) { // use eigenvectors
     for(int q=0;q<nq;q++){
       for(int sd=0;sd<nSites*dim;sd++){
-        val=ev2s[nSites*dim*q+sd].v;
+        index1 = nSites*dim*q+sd;
+        val=ev2s[index1].v;
         // assert(val>0,"value must be >0");
         val+=dBin/2.0;
         for(int s=0;s<nSites;s++){
@@ -311,6 +330,8 @@ int pdCompute(int nSites,int nq,QPoint* qs,
           index = nSites*dim*nSites*q + nSites*sd + s;  //XXX: withVecs
           weight *= EigenVectorMag2(&pols[index]);      //XXX: withVecs
           int bin=(int)(val/dBin); // bin 0 has values [-0.5*dBin..0.5*dBin)
+#ifdef debug
+#endif
           bins[ nBins*s + bin ] += weight;
           sums[s] += weight;
         }
@@ -478,10 +499,19 @@ int initSetup(void) {
 QPoint* generateQpoints(int type,System* system,int* nq,int N) {
   int nqs;
   QPoint* qs;
-  if(type == 1) {
+  printf("generateQpoints: type=%d\n", type);
+  switch (type) {
+  case 10:
     qs=qpointGenRegularInRCell(system,&nqs,N);
-  } else {
+    break;
+  case 11:
+    qs=qpointGenRegularInRCell(system,&nqs,N, 1);
+    break;
+  case 0: 
     qs=qpointGenRandomInRCell(system,&nqs,N);
+    break;
+  default:
+    throw;
   }
   *nq=nqs;
   return qs;
@@ -498,7 +528,7 @@ QPoint* generateRandomQs(System* system,int* nq,int N) {
 // generate regular q-points for selected system
 QPoint* generateRegularQs(System* system,int* nq,int N) {
   int nqs;
-  QPoint* qs=generateQpoints(1,system,&nqs,N);
+  QPoint* qs=generateQpoints(10,system,&nqs,N);
   *nq = nqs;
   return qs;
 } // type = 1

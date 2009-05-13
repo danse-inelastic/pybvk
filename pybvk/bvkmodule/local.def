@@ -9,14 +9,19 @@
 # <LicenseText>
 # 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 
 # C++
+    PROJ_CXX_INCLUDES += ..
 
-    PROJ_CXX_INCLUDES = ..
+    
+# ACML
+    PROJ_LCXX_FLAGS += -I $(ACML_INCDIR) -L $(ACML_LIBDIR) -l acml -l acml_mv
+
 
 # lapack (add the location for liblapack.so)
-
-    PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
+# atlas
+#   PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
 
 
 # version

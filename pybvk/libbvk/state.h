@@ -70,6 +70,16 @@ static inline QPoint* qpointGenRegularInRCell(System* system,int* pnq,int n,bool
   QPoint* qs=(QPoint*)malloc(*pnq*sizeof(QPoint));
   QPoint* qc=qs;
 
+  // write Qgridinfo
+  const char *filename = "Qgridinfo";
+  FILE *f = fopen(filename, "w");
+  fprintf(f, "n1=%d; n2=%d; n3=%d;\n", n,n,n);
+  double ratio = 1.;
+  if (!inclusive) ratio = (n-1.)/n;
+  fprintf(f, "b1=%15.10g,%15.10g,%15.10g\n", rcell->a.x*ratio, rcell->a.y*ratio, rcell->a.z*ratio);
+  fprintf(f, "b2=%15.10g,%15.10g,%15.10g\n", rcell->b.x*ratio, rcell->b.y*ratio, rcell->b.z*ratio);
+  fprintf(f, "b3=%15.10g,%15.10g,%15.10g\n", rcell->c.x*ratio, rcell->c.y*ratio, rcell->c.z*ratio);
+
   if (inclusive) {
     division = 1./(n-1);
     startindex = 0;

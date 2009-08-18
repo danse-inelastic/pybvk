@@ -1,5 +1,10 @@
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Make sure you have the right path to the lapack (or acml) 
+# library.
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #LAPACK_DIR = /tmp/opt/acml-3.6.0/gnu64
 ##LAPACK_DIR = /tmp/opt/acml4gf-4.1.0/gfortran64
+###LAPACK_DIR = $(HOME)
 LAPACK_DIR = $(HOME)
 
 CC	= g++
@@ -7,9 +12,22 @@ IFLAGS	= -fpic -I$(LAPACK_DIR)/include
 CFLAGS 	= $(IFLAGS) -ffast-math -funroll-all-loops -Wall -O3
 LDFLAGS	= $(IFLAGS)
 
-#LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lm
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Make sure you are linked to the right library. 
+# The following are a few possibilities
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#this is good for acml compiled with g77
+#LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lg2c -lm
+#
+##this is good for acml compiled with gfortran
 ##LIBS 	= -L$(LAPACK_DIR)/lib -lacml -lacml_mv -lm -lgfortran
+#
+###this is good for linking to lapack compile with g77
+###LIBS 	= -L$(LAPACK_DIR)/lib/atlas -llapack -L$(HOME)/lib -lg2c -lm
+#
+###this is good for linking to lapack ???
 LIBS 	= -L$(LAPACK_DIR)/lib/atlas -llapack -L$(HOME)/lib -lm
+
 #---------------------------------------------------
 SOURCES	= system.c bvk.c fwd.c h.c pd.c randomQs.c regularQs.c \
           printQs.c printEVs.c printDOS.c printSys.c

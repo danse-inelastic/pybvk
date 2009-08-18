@@ -17,7 +17,7 @@ int main(int argc,char *argv[]) {
   }
   int type = 0; // random Qpoints
   if(argc>4) {               // Q point distribution? (select from list)
-    if(strcmp(argv[4],"regular") == 0) { type = 1; }
+    if(strcmp(argv[4],"regular") == 0) { type = 10; } //XXX: was type=1
   }
   char sysname[]="system";
   if(argc>5) {               // name of system? (select from list)

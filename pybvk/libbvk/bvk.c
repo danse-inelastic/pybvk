@@ -219,7 +219,7 @@ int bvkCompute(System* system,int nq,QPoint* qs,
 
     double v[d.n];
     memset(&v,0,sizeof(double)*d.n);
-    long int info=-1;
+    int info=-1; // XXX: was 'long int'
     // Fill array in C order in upper triangle and call with 'L' and it works
     #ifdef __amd64__
       zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
@@ -481,7 +481,7 @@ int randomQs(int N) { // type = 0
 
 // generate regular q-points
 int regularQs(int N) { // type = 1
-  return Qps(1,N);
+  return Qps(10,N); //XXX: was type=1... what about type=11?
 }
 
 // XXX: targets for python bindings -----
@@ -499,7 +499,9 @@ int initSetup(void) {
 QPoint* generateQpoints(int type,System* system,int* nq,int N) {
   int nqs;
   QPoint* qs;
+#ifdef debug
   printf("generateQpoints: type=%d\n", type);
+#endif // debug
   switch (type) {
   case 10:
     qs=qpointGenRegularInRCell(system,&nqs,N);

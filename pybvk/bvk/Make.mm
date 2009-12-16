@@ -14,6 +14,7 @@ PROJECT = bvk
 PACKAGE = bvk
 
 BUILD_DIRS = \
+	bvkmodels \
 	input_generators \
 
 OTHER_DIRS = \

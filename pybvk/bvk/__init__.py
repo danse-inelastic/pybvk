@@ -15,9 +15,15 @@ __doc__="""
 pybvk: bvk forward engine
 """
 
-# import bvk python functions defined in C binding layer
-from _bvk import *  #XXX building with Makefile
-#from bvk import *   #XXX building with Make.mm
+
+try:
+    # import bvk python functions defined in C binding layer
+    from _bvk import *  #XXX building with Makefile
+    #from bvk import *   #XXX building with Make.mm
+except ImportError:
+    import warnings
+    warnings.warn('bvk c binding was not loaded!')
+    
 
 def copyright():
     return "bvk module: Copyright (c) 2008 Mike McKerns";

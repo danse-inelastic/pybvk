@@ -31,7 +31,9 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-    __init__.py
+	find_force_constant_tensor_constraints.py \
+	__init__.py \
+
 
 export:: export-python-modules
 

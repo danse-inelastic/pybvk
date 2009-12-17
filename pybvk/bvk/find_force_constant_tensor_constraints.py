@@ -88,17 +88,20 @@ def findForceContantTensorConstraints(vector, lattice, sg):
     # the equations result from symmetry requirement of the bond
     # the rotation matrices in relative coords
     #   R in Rs don't work: special things about numpy array
+    allRs = [symop.R for symop in sg.iter_symops_leave_vector_unchanged(vector)]
+    # print allRs
     Rs = []; ids = []
-    for symop in sg.iter_symops_leave_vector_unchanged(vector):
-        R = symop.R
+    for R in allRs:
         if id(R) not in ids:
             Rs.append(R)
             ids.append(id(R))
         continue
+    # print Rs
     #  function to convert matrix to cartesian
-    def _toCartesian(symop):
+    def toCartesian(R):
         return numpy.dot(numpy.dot(binv, R), b)
-    Rs = map(_toCartesian, Rs)
+    Rs = map(toCartesian, Rs)
+    # print Rs
     equations = _equationsForSymmetriesRestricted3X3Tensor(Rs)
 
     # add the equations for instrisic symmetry of force constant tensor
@@ -214,6 +217,83 @@ class TestCase(unittest.TestCase):
         vector = [1.5,0.5,0]
         print 'bond 310 for fcc lattice'
         for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
+            print constraint
+            
+        # 222
+        vector = [2,2,2]
+        print 'bond 222 for fcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
+            print constraint
+            
+        # 321
+        vector = [3,2,1]
+        print 'bond 321 for fcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
+            print constraint
+            
+        # 400
+        vector = [4,0,0]
+        print 'bond 400 for fcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
+            print constraint
+            
+        return
+
+
+    def test5(self):
+        # bcc
+        import matter
+        lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
+
+        #
+        from matter.SpaceGroups import sg229
+        
+        # 111
+        vector = [1, 1, 1]
+        print 'bond 111 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 200
+        vector = [2,0,0]
+        print 'bond 200 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+
+        # 220
+        vector = [2,2,0]
+        print 'bond 220 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 311
+        vector = [3,1,1]
+        print 'bond 311 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 222
+        vector = [2,2,2]
+        print 'bond 222 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 400
+        vector = [4,0,0]
+        print 'bond 400 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 133
+        vector = [1,3,3]
+        print 'bond 133 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
+            print constraint
+            
+        # 420
+        vector = [4,2,0]
+        print 'bond 420 for bcc lattice'
+        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
             print constraint
             
         return

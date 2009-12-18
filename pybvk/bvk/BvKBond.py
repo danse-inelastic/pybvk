@@ -24,6 +24,11 @@ class BvKBond(object):
     force_constant_matrix = [[0,0,0], [0,0,0], [0,0,0]]
 
 
+    def __str__(self):
+        return 'bond: atom %s to atom % shifted %s:\n%s' % (
+            self.A, self.B, self.Boffset, self.force_constant_matrix)
+
+
 # version
 __id__ = "$Id$"
 

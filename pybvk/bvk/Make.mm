@@ -36,6 +36,7 @@ EXPORT_PYTHON_MODULES = \
 	BvKBond.py \
 	BvKModel.py \
 	__init__.py \
+	_utils.py \
 	find_force_constant_tensor_constraints.py \
 
 

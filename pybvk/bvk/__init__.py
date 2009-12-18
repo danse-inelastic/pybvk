@@ -23,6 +23,13 @@ try:
 except ImportError:
     import warnings
     warnings.warn('bvk c binding was not loaded!')
+
+
+
+def systemFromModel(model, **kwds):
+    from _utils import systemFromModel
+    return systemFromModel(model, **kwds)
+
     
 
 def copyright():

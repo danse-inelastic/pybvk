@@ -16,6 +16,7 @@ PACKAGE = bvk
 BUILD_DIRS = \
 	bvkmodels \
 	input_generators \
+	orm \
 
 OTHER_DIRS = \
 
@@ -32,8 +33,10 @@ all: export
 # export
 
 EXPORT_PYTHON_MODULES = \
-	find_force_constant_tensor_constraints.py \
+	BvKBond.py \
+	BvKModel.py \
 	__init__.py \
+	find_force_constant_tensor_constraints.py \
 
 
 export:: export-python-modules

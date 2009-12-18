@@ -29,6 +29,8 @@ class ConvertModuleToModel(object):
 
 
     def _convertToModel(self, module):
+        if not hasattr(module, 'lattice_type'):
+            return
         if module.lattice_type not in ['bcc', 'fcc']: return
 
         ltype = module.lattice_type

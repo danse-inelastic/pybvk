@@ -38,11 +38,13 @@ class ConvertModuleToModel(object):
 
 
     def _convertbccModel(self, module):
+        bccbase = numpy.array( [[2.,0,0], [0,2,0], [1, 1, 1]] )
+        bccbaseinv = numpy.linalg.inv(bccbase.T)
+        
         atom1 = Atom(module.element)
-        atom2 = Atom(module.element, [0.5,0.5,0.5])
-        atoms = [atom1, atom2]
+        atoms = [atom1]
         a = module.a
-        lattice = Lattice(a=a,b=a,c=a, alpha=90, beta=90, gamma=90)
+        lattice = Lattice(base = bccbase*(a/2))
         description = '%s %s at %sK' % (module.lattice_type, module.element, module.temperature)
         struct = Structure(lattice=lattice, sgid=229, atoms=atoms, description=description)
 
@@ -60,7 +62,12 @@ class ConvertModuleToModel(object):
 
         bonds = []
         for bond, fc in module.force_constants.iteritems():
+            # this is in the cubic coordinates
+            # such as 111, 200, 220 etc
             vec = numpy.array(map(float, bond))/2.
+            # convert to fractional coordinates
+            vec = numpy.dot(bccbaseinv, vec)*2
+            
             bvkbond = BvKBond()
             bvkbond.matter = struct
             bvkbond.A = bvkbond.B = 0
@@ -78,13 +85,15 @@ class ConvertModuleToModel(object):
     
         
     def _convertfccModel(self, module):
+        fccbase = numpy.array([[1,1,0], [1,0,1], [0,-1,-1]])
+        fccbaseinv = numpy.linalg.inv(fccbase.T)
+
         atom1 = Atom(module.element)
-        atom2 = Atom(module.element, [0.5,0.5,0])
-        atom3 = Atom(module.element, [0.5,0,0.5])
-        atom4 = Atom(module.element, [0,0.5,0.5])
-        atoms = [atom1, atom2, atom3, atom4]
+        atoms = [atom1]
+
         a = module.a
-        lattice = Lattice(a=a,b=a,c=a, alpha=90, beta=90, gamma=90)
+        lattice = Lattice(base=fccbase*(a/2))
+        
         description = '%s %s at %s' % (module.lattice_type, module.element, module.temperature)
         struct = Structure(lattice=lattice, sgid=225, atoms=atoms, description=description)
 
@@ -106,7 +115,7 @@ class ConvertModuleToModel(object):
             bvkbond = BvKBond()
             bvkbond.matter = struct
             bvkbond.A = bvkbond.B = 0
-            bvkbond.Boffset = vec
+            bvkbond.Boffset = numpy.dot(fccbaseinv, vec)*2
             try:
                 bvkbond.force_constant_matrix = eval('fcc%s' % bond)(fc)
             except:
@@ -253,7 +262,21 @@ class TestCase(unittest.TestCase):
 
     def test1(self):
         import al_300
-        module2model(al_300)
+        model = module2model(al_300)
+        print 'structure:', model.matter
+        print 'bonds'
+        for bond in model.bonds:
+            print bond
+        return
+
+
+    def test2(self):
+        import fe_295
+        model = module2model(fe_295)
+        print 'structure:', model.matter
+        print 'bonds'
+        for bond in model.bonds:
+            print bond
         return
 
 

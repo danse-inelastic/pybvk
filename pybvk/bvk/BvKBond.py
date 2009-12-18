@@ -18,10 +18,10 @@ class BvKBond(object):
     matter = None
 
     # settable by users
-    A = 0
-    B = 0
-    Boffset = [0,0,0]
-    force_constant_matrix = [[0,0,0], [0,0,0], [0,0,0]]
+    A = 0 # index of atom A in the atom list in the atomic structuree
+    B = 0 # index of atom B in the atom list in the atomic structuree 
+    Boffset = [0,0,0] # offset vector for atom B. it should be in fractional coords
+    force_constant_matrix = [[0,0,0], [0,0,0], [0,0,0]] # force constant matrix in cartesian coords
 
 
     def __str__(self):

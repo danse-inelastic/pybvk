@@ -39,6 +39,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+	converttobvkmodelobject.py \
 	__init__.py \
 	ag_293.py \
 	ag_296.py \

@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
 # given the python module to create "system", calculate dispersion
-
-# bvkdisp system-python-file N-kpts-in-1D
+# the python module is optional. if it is not given, then "system" file must exist already.
 
 
 def run(systempy, N, df, inclusive=1):
     "inclusive: when generating regular Qs, include points on the edge (begin and end)"
     Vecs = 1
+    cmds = []
+    
+    if systempy:
+        cmds.append('python %s' % systempy)
+        
     cmds = [
-        'python %s' % systempy,
         'bvkregularQs %s %s' % (N, inclusive),
         'bvkdisps %s' % Vecs,
         'bvkpartialdos %s %s' % (Vecs, df), 
@@ -43,10 +46,14 @@ def main():
        )
 
     (options, args) = parser.parse_args()
-    if len(args) != 1:
+    if len(args) > 1:
         parser.error("incorrect number of arguments")
 
-    systempy = args[0]
+    if len(args) == 1:
+        systempy = args[0]
+    else:
+        systempy = None
+        
     N = int(options.N)
     df = float(options.df)
     return run(systempy, N, df)

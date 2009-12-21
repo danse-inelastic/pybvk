@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
 # given the python module to create "system", calculate dos
+# the python module is optional. if it is not given, then "system" file must exist already.
 
-# bvkdos system-python-file N-kpts-in-1D
 
 
 def run(systempy, df, N, Vecs):
     Vecs = int(Vecs)
-    cmds = [
-        'python %s' % systempy,
+
+    cmds = []
+
+    if systempy:
+        cmds.append('python %s' % systempy)
+        
+    cmds += [
         'bvkrandomQs %s' % N,
         'bvkdisps %s' % Vecs,
         'bvkpartialdos %s %s' % (Vecs, df), 
@@ -28,7 +33,7 @@ def spawn(cmds):
 from optparse import OptionParser
 
 def main():
-    usage = "usage: %prog [options] system-python-file"
+    usage = "usage: %prog [options] [system-python-file]"
     parser = OptionParser(usage)
     parser.add_option(
         "-N", "--N-kpts-1D", dest="N",
@@ -48,10 +53,13 @@ def main():
         )
 
     (options, args) = parser.parse_args()
-    if len(args) != 1:
+    if len(args) > 1:
         parser.error("incorrect number of arguments")
 
-    systempy = args[0]
+    if len(args) == 1:
+        systempy = args[0]
+    else:
+        systempy = None
     N = int(options.N)
     df = float(options.df)
     Vecs= bool(options.Vecs)

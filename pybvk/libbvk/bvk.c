@@ -497,6 +497,10 @@ int initSetup(void) {
 
 // generate qpoints for selected system
 // NOTE: new qpoint methods go here
+// NOTE: types of q points
+//   10: regular Qs in the 1BZ. boundaries not included
+//   11: regular Qs in the 1BZ. boundaries are included
+//   0:  random Qs in the 1BZ.
 QPoint* generateQpoints(int type,System* system,int* nq,int N) {
   int nqs;
   QPoint* qs;

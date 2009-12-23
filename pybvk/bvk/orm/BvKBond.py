@@ -20,6 +20,7 @@ class Inventory(InvBase):
 
     from matter.orm.Structure import Structure
     matter = InvBase.d.reference(name='matter', targettype=Structure, owned=0)
+    uses_primitive_unitcell = InvBase.d.bool(name='uses_primitive_unitcell', default=1)
 
     A = InvBase.d.int(name='A')
     B = InvBase.d.int(name='B')
@@ -27,6 +28,7 @@ class Inventory(InvBase):
     Boffset = InvBase.d.array(
         name='Boffset', elementtype='float',
         default=[0,0,0], shape=3)
+    Boffset_is_fractional = InvBase.d.bool(name='Boffset_is_fractional', default=0)
 
     force_constant_matrix = InvBase.d.array(
         name='force_constant_matrix', elementtype='float',

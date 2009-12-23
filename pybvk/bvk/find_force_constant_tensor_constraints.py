@@ -78,10 +78,10 @@ def findForceContantTensorConstraints(vector, lattice, sg):
     the symmetry group.
 
     sg is an instance of matter.SpaceGroups.SpaceGroup. required methods are 'iter_symops_leave_vector_unchanged', which should return symmetry operations that has an attribute 'R' being 3X3 rotation matrix represented in relative lattice coordinates.
-    lattice is an instance of matter.Lattice.Lattice. required attribute: 'stdbase', which is the matrix of base vectors in cartesian coordinates in standard orientation.
+    lattice is an instance of matter.Lattice.Lattice. required attribute: 'base', which is the matrix of base vectors in cartesian coordinates.
     vector is a vector of 3 in relative lattice coords
     """
-    b = lattice.stdbase
+    b = lattice.base
     import numpy.linalg as nl
     binv = nl.inv(b)
 

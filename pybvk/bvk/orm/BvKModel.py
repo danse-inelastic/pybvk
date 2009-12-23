@@ -22,6 +22,11 @@ from BvKBond import BvKBond
 class Inventory(InvBase):
 
     matter = InvBase.d.reference(name='matter', targettype=None, targettypes=[Structure], owned=0)
+    uses_primitive_unitcell = InvBase.d.bool(
+        name='uses_primitive_unitcell', default=1,
+        tip='Please be very careful changing this property. It affects all bonds in this model.',
+        )
+
     short_description = InvBase.d.str(name='short_description', label='description')
 
     bonds = InvBase.d.referenceSet(name='bonds', targettype=BvKBond, owned=1)

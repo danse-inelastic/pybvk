@@ -25,12 +25,20 @@ def systemFromModel(model, stream=None, filename=None):
     lattice = matter.lattice
 
     # cell
-    cell = lattice.base.copy()
+    uses_primitive_unitcell = model.uses_primitive_unitcell
+    if uses_primitive_unitcell:
+        cell = matter.primitive_unitcell.base.copy()
+    else:
+        cell = lattice.base.copy()
     cell.shape = -1
 
     # atoms
+    if uses_primitive_unitcell:
+        iteratoms = matter.primitive_unitcell.atoms
+    else:
+        iteratoms = matter
     atoms = []
-    for atom in matter:
+    for atom in iteratoms:
         symbol = atom.symbol
         mass = atom.mass * atomic_mass_unit
         atoms.append([symbol, mass])
@@ -38,24 +46,50 @@ def systemFromModel(model, stream=None, filename=None):
 
     # sites
     sites = []
-    for i, atom in enumerate(matter):
-        x,y,z = np.dot(lattice.base.T,atom.xyz)
+    if uses_primitive_unitcell:
+        cartesian = matter.primitive_unitcell.cartesian
+    else:
+        cartesian = matter.lattice.cartesian
+    #
+    for i, atom in enumerate(iteratoms):
+        x,y,z = cartesian(atom.xyz)
         sites.append([x,y,z, i])
         continue
 
     # bonds
+    bondobjs = model.bonds
+    def len2(v):
+        return np.sum(np.square(v))
+    def cmpbondlength(bond1, bond2):
+        return int(len2(bond1.getBondVectorInCartesianCoords())-len2(bond2.getBondVectorInCartesianCoords()))
+    bondobjs.sort(cmpbondlength)
     bonds = []
-    for bond in model.bonds:
+    for bond in bondobjs:
+        #
+        assert bond.uses_primitive_unitcell == uses_primitive_unitcell
+        #
         A = bond.A; B = bond.B
-        Boffset = np.dot(lattice.base.T, bond.Boffset)
+        #
+        Boffset = bond.Boffset
+        if bond.Boffset_is_fractional:
+            Boffset = cartesian(Boffset)
+        #
         m = np.array(bond.force_constant_matrix)
         m.shape = -1
+        #
         bonds.append([A, B] + list(Boffset) + list(m))
         continue
 
     # symRs
     symRs = getUniqueRotations(matter.sg)
-
+    # convert to cartesian
+    # the rotation matrices are in the fractional coordinates of
+    # the lattice
+    base = matter.lattice.base
+    binv = np.linalg.inv(base)
+    def toCartesian(R):
+        return np.dot(np.dot(binv, R), base)
+    symRs = map(toCartesian, symRs)
     # output
     if stream is None:
         stream = open(filename, 'w')
@@ -65,7 +99,6 @@ def systemFromModel(model, stream=None, filename=None):
 
 
 def _write(cell, atoms, sites, bonds, symRs, stream):
-
     from bvk.input_generators.system.System import fatAll
 
     a,s,b = fatAll(atoms,sites,bonds)

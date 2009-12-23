@@ -40,18 +40,21 @@ class ConvertModuleToModel(object):
 
 
     def _convertbccModel(self, module):
-        bccbase = numpy.array( [[2.,0,0], [0,2,0], [1, 1, 1]] )
-        bccbaseinv = numpy.linalg.inv(bccbase.T)
-        
-        atom1 = Atom(module.element)
-        atoms = [atom1]
+        bccbase = numpy.array( [[1.,0,0], [0,1,0], [0, 0, 1]] )
+
+        e = module.element
+        atoms = [
+            Atom(e),
+            Atom(e, (0.5,0.5,0.5)),
+            ]
         a = module.a
-        lattice = Lattice(base = bccbase*(a/2))
+        lattice = Lattice(base = bccbase*a)
         description = '%s %s at %sK' % (module.lattice_type, module.element, module.temperature)
         struct = Structure(lattice=lattice, sgid=229, atoms=atoms, description=description)
 
         model = BvKModel()
         model.matter = struct
+        model.uses_primitive_unitcell = True
         model.short_description = 'bvk model of %s from literature' % description
         try:
             model.long_description = module.details
@@ -67,11 +70,13 @@ class ConvertModuleToModel(object):
             # this is in the cubic coordinates
             # such as 111, 200, 220 etc
             vec = numpy.array(map(float, bond))/2.
-            # convert to fractional coordinates
-            vec = numpy.dot(bccbaseinv, vec)*2
+            # convert to cartesian coordinates
+            vec = vec * a
             
             bvkbond = BvKBond()
             bvkbond.matter = struct
+            bvkbond.uses_primitive_unitcell = True
+            bvkbond.Boffset_is_fractional = False
             bvkbond.A = bvkbond.B = 0
             bvkbond.Boffset = vec
             try:
@@ -87,19 +92,24 @@ class ConvertModuleToModel(object):
     
         
     def _convertfccModel(self, module):
-        fccbase = numpy.array([[1,1,0], [1,0,1], [0,-1,-1]])
-        fccbaseinv = numpy.linalg.inv(fccbase.T)
+        fccbase = numpy.array([[1,0,0], [0,1,0], [0,0,1]])
 
-        atom1 = Atom(module.element)
-        atoms = [atom1]
+        e = module.element
+        atoms = [
+            Atom(e),
+            Atom(e, (0.5,0.5,0)),
+            Atom(e, (0.5,0,0.5)),
+            Atom(e, (0,0.5,0.5)),
+            ]
 
         a = module.a
-        lattice = Lattice(base=fccbase*(a/2))
+        lattice = Lattice(base=fccbase*a)
         
         description = '%s %s at %s' % (module.lattice_type, module.element, module.temperature)
         struct = Structure(lattice=lattice, sgid=225, atoms=atoms, description=description)
 
         model = BvKModel()
+        model.uses_primitive_unitcell = 1
         model.matter = struct
         model.short_description = 'bvk model of %s from literature' % description
         try:
@@ -116,8 +126,10 @@ class ConvertModuleToModel(object):
             vec = numpy.array(map(float, bond))/2.
             bvkbond = BvKBond()
             bvkbond.matter = struct
+            bvkbond.uses_primitive_unitcell = 1
             bvkbond.A = bvkbond.B = 0
-            bvkbond.Boffset = numpy.dot(fccbaseinv, vec)*2
+            bvkbond.Boffset_is_fractional = 0
+            bvkbond.Boffset = vec*a
             try:
                 bvkbond.force_constant_matrix = eval('fcc%s' % bond)(fc)
             except:
@@ -269,6 +281,7 @@ class TestCase(unittest.TestCase):
         print 'bonds'
         for bond in model.bonds:
             print bond
+            print bond.getConstraints()
         return
 
 
@@ -279,6 +292,7 @@ class TestCase(unittest.TestCase):
         print 'bonds'
         for bond in model.bonds:
             print bond
+            print bond.getConstraints()
         return
 
 

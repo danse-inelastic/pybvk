@@ -69,7 +69,7 @@ gpy:
 	$(CP) $(SRC_LIBDIR)/g.py .
 
 system:
-	$(LN_S) $(SRC_SYSDIR)/syms ./syms
+	if [ ! -h syms ] ; then $(LN_S) $(SRC_SYSDIR)/syms ./syms; fi
 	$(PYTHON) $(SRC_SYSDIR)/Al
 #	$(RM_F) ./syms
 

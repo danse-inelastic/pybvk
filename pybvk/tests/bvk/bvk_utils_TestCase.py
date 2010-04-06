@@ -28,6 +28,28 @@ class TestCase(unittest.TestCase):
         return
 
 
+    def test2(self):
+        workdir = 'fe_295-workdir'
+        
+        import os
+        if os.path.exists(workdir):
+            import shutil
+            shutil.rmtree(workdir)
+        else:
+            os.makedirs(workdir)
+            
+        from bvk.bvkmodels import converttobvkmodelobject, fe_295
+        model = converttobvkmodelobject.module2model(fe_295)
+        
+        from bvk import systemFromModel
+        systemFromModel(model, filename=os.path.join(workdir, 'system'))
+        
+        cmd = 'cd %s && bvkdisp.py -d 0.1 -N 20' % workdir
+        if (os.system(cmd)):
+            raise RuntimeError, '%s failed' % cmd
+        return        
+
+
 def main():
     unittest.main()
     return

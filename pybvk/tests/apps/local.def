@@ -1,0 +1,25 @@
+# -*- Makefile -*-
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# Jiao Lin
+# linjiao@caltech.edu
+# (C) 2010 All Rights Reserved
+# 
+# <LicenseText>
+# 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+
+# C++
+    
+    PROJ_CXX_INCLUDES = ..
+
+# lapack (add the location for liblapack.so)
+
+    PROJ_LCXX_FLAGS += -L/$(HOME)/lib/atlas
+
+
+# version
+# $Id$
+# End of file

@@ -12,7 +12,7 @@ def run(systempy, N, df, inclusive=1):
     if systempy:
         cmds.append('python %s' % systempy)
         
-    cmds = [
+    cmds += [
         'bvkregularQs %s %s' % (N, inclusive),
         'bvkdisps %s' % Vecs,
         'bvkpartialdos %s %s' % (Vecs, df), 

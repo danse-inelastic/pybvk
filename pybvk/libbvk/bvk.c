@@ -222,6 +222,8 @@ int bvkCompute(System* system,int nq,QPoint* qs,
     // Fill array in C order in upper triangle and call with 'L' and it works
     #ifdef __amd64__
     int info=-1;
+    // I guess this really depends on implementation of zheev... it could be long int
+    // long int info=-1;
       zheev(pes?'V':'N','L',d.n,d.e,d.n,v,&info);
     #else
     long int info=-1;

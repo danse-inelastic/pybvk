@@ -35,8 +35,7 @@ class TestCase(unittest.TestCase):
         if os.path.exists(workdir):
             import shutil
             shutil.rmtree(workdir)
-        else:
-            os.makedirs(workdir)
+        os.makedirs(workdir)
             
         from bvk.bvkmodels import converttobvkmodelobject, fe_295
         model = converttobvkmodelobject.module2model(fe_295)
@@ -44,7 +43,7 @@ class TestCase(unittest.TestCase):
         from bvk import systemFromModel
         systemFromModel(model, filename=os.path.join(workdir, 'system'))
         
-        cmd = 'cd %s && bvkdisp.py -d 0.1 -N 20' % workdir
+        cmd = 'cd %s && bvkdisp.py -d 0.1 -N 80' % workdir
         if (os.system(cmd)):
             raise RuntimeError, '%s failed' % cmd
         return        

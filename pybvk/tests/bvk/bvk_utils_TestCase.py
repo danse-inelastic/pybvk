@@ -29,24 +29,35 @@ class TestCase(unittest.TestCase):
 
 
     def test2(self):
-        workdir = 'fe_295-workdir'
-        
-        import os
-        if os.path.exists(workdir):
-            import shutil
-            shutil.rmtree(workdir)
-        os.makedirs(workdir)
-            
-        from bvk.bvkmodels import converttobvkmodelobject, fe_295
-        model = converttobvkmodelobject.module2model(fe_295)
-        
-        from bvk import systemFromModel
-        systemFromModel(model, filename=os.path.join(workdir, 'system'))
-        
-        cmd = 'cd %s && bvkdisp.py -d 0.1 -N 80' % workdir
-        if (os.system(cmd)):
-            raise RuntimeError, '%s failed' % cmd
+        computeDOS('pb_80')
+        # computeDOS('fe_295')
         return        
+
+
+def computeDOS(modelname, df=0.1, N=40):
+    import tempfile
+    workdir = tempfile.mkdtemp()
+
+    import os
+    #os.makedirs(workdir)
+
+    from bvk.bvkmodels import converttobvkmodelobject
+    exec 'from bvk.bvkmodels import %s as module' % modelname
+    model = converttobvkmodelobject.module2model(module)
+
+    from bvk import systemFromModel
+    systemFromModel(model, filename=os.path.join(workdir, 'system'))
+
+    cmd = 'cd %s && bvkdos.py -d %s -N %s' % (workdir, df, N)
+    if (os.system(cmd)):
+        raise RuntimeError, '%s failed' % cmd
+
+    path = os.path.join(workdir, 'DOS')
+    from idf.DOS import read
+    info, e, I = read(path)
+    import pylab;  pylab.plot(e,I); pylab.show()
+    
+    return workdir
 
 
 def main():

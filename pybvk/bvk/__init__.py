@@ -21,8 +21,9 @@ try:
     from _bvk import *  #XXX building with Makefile
     #from bvk import *   #XXX building with Make.mm
 except ImportError:
-    import warnings
-    warnings.warn('bvk c binding was not loaded!')
+    pass
+    #import warnings
+    #warnings.warn('bvk c binding was not loaded!')
 
 
 

@@ -189,7 +189,7 @@ class TestCase(unittest.TestCase):
 
 
     def test6(self):
-        # bcc
+        # simple cubic
         import matter
         lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
 
@@ -204,6 +204,73 @@ class TestCase(unittest.TestCase):
             
         return
 
+
+    def test7(self):
+        # simple cubic
+        import matter
+        lattice = matter.Lattice(a=3.701, b=3.701, c=3.701, alpha=90, beta=90, gamma=90)
+        #lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
+
+        #
+        from matter.SpaceGroups import sg221
+        
+        # 011
+        vector = [0, 1, 1]
+        print 'bond 011 for bcc lattice'
+        constraints = findForceContantTensorConstraints(vector, lattice, sg221)
+        for constraint in  constraints:
+            print constraint
+            
+        return
+
+
+    def test7b(self):
+        # simple cubic
+        import matter
+        lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
+
+        #
+        from matter.SpaceGroups import sg221
+        
+        # 011
+        vector = [0, 1, 1]
+        print 'bond 011 for bcc lattice'
+        constraints = findForceContantTensorConstraints(vector, lattice, sg221)
+        for constraint in  constraints:
+            print constraint
+            
+        return
+
+
+    def test8(self):
+        'find_force_constant_tensor_constraints.SympyExpressionCleaner'
+        from bvk.find_force_constant_tensor_constraints import SympyExpressionCleaner
+        cleaner =  SympyExpressionCleaner()
+        
+        import sympy
+        x = sympy.Symbol('x')
+        y = sympy.Symbol('y')
+        
+        e = 1e-13 * x + y
+        self.assertNotEqual(e, y)
+        # clean
+        e1 = cleaner.render(e)
+        self.assertEqual(e1, y)
+        
+        e = (1+1e-13) * x + y
+        self.assertNotEqual(e, x+y)
+        # clean
+        e1 = cleaner.render(e)
+        self.assertEqual(e1, x+y)
+        
+        e = (-2+1e-13) * x + y
+        self.assertNotEqual(e, -2*x+y)
+        # clean
+        e1 = cleaner.render(e)
+        self.assertEqual(e1, -2*x+y)
+        
+        return
+    
 
 def main():
     unittest.main()

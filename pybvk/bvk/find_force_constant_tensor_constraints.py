@@ -68,6 +68,7 @@ def _equationsForSymmetriesRestricted3X3Tensor(Rs):
     import operator
     equations = [reduce(operator.add, equation.tolist())
                  for equation in equations]
+    equations = [exp_cleaner.render(eq) for eq in equations]
     return reduce(operator.add, equations)
     
 
@@ -126,185 +127,68 @@ _intrinsicSymmetryEquationsForForceConstantTensor = [
     ]
 
 
-import unittest
-class TestCase(unittest.TestCase):
 
-    def test1(self):
-        R = [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, -1],
-            ]
-        restrictions = symmetryRestricted3X3Tensor(R)
-        assert restrictions[T[0,0]] == T[1,1]
-        assert restrictions[T[0,1]] == T[1,0]
-        assert restrictions[T[2,0]] == -T[2,1]
-        assert restrictions[T[0,2]] == -T[1,2]
+class SympyExpressionCleaner(object):
+
+    '''
+    expression resulted from symmetry analysis may contain near-zaro numbers
+    that result from floating point error. this component is responsible
+    for cleaning up the expresion.
+    '''
+
+
+    def __init__(self, epsilon=1e-8):
+        self.epsilon = epsilon
+        import math
+        self.math = math
         return
+    
+
+    def render(self, expression):
+        if self.isNumber(expression): return self.onNumber(expression)
+        return self.dispatch(expression)
 
 
-    def test2(self):
-        R = [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, -1],
-            ]
-        restrictions = symmetriesRestricted3X3Tensor([R])
-        assert restrictions[T[0,0]] == T[1,1]
-        assert restrictions[T[0,1]] == T[1,0]
-        assert restrictions[T[2,0]] == -T[2,1]
-        assert restrictions[T[0,2]] == -T[1,2]
-        return
+    def isNumber(self, candidate):
+        return isinstance(candidate, int) or \
+               isinstance(candidate, float)
 
 
-    def test3(self):
-        R1 = [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, -1],
-            ]
-        R2 = [
-            [1, 0, 0],
-            [0, 0, 1],
-            [0, -1, 0],
-            ]
-        restrictions = symmetriesRestricted3X3Tensor([R1, R2])
-        self.assertEqual(restrictions[T[0,0]], T[2,2])
-        self.assertEqual(restrictions[T[1,1]], T[2,2])
-        self.assertEqual(restrictions[T[0,1]], 0)
-        self.assertEqual(restrictions[T[0,2]], 0)
-        self.assertEqual(restrictions[T[1,0]], 0)
-        self.assertEqual(restrictions[T[1,2]], 0)
-        self.assertEqual(restrictions[T[2,0]], 0)
-        self.assertEqual(restrictions[T[2,1]], 0)
-        return
+    def dispatch(self, expression):
+        name = 'on'+expression.__class__.__name__.capitalize()
+        if not hasattr(self, name): return expression
+        method = getattr(self, name)
+        return method(expression)
 
 
-    # depends on "matter" package
-    def test4(self):
-        # fcc
-        import matter
-        lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
-
-        #
-        from matter.SpaceGroups import sg225
-        
-        # 110
-        vector = [0.5, 0.5, 0]
-        print 'bond 110 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 200
-        vector = [1,0,0]
-        print 'bond 200 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-
-        # 211
-        vector = [1,0.5,0.5]
-        print 'bond 211 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 220
-        vector = [1,1,0]
-        print 'bond 220 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 310
-        vector = [1.5,0.5,0]
-        print 'bond 310 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 222
-        vector = [2,2,2]
-        print 'bond 222 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 321
-        vector = [3,2,1]
-        print 'bond 321 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        # 400
-        vector = [4,0,0]
-        print 'bond 400 for fcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg225):
-            print constraint
-            
-        return
+    def onList(self, l):
+        return [self.render(e) for e in l]
 
 
-    def test5(self):
-        # bcc
-        import matter
-        lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
-
-        #
-        from matter.SpaceGroups import sg229
-        
-        # 111
-        vector = [1, 1, 1]
-        print 'bond 111 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 200
-        vector = [2,0,0]
-        print 'bond 200 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-
-        # 220
-        vector = [2,2,0]
-        print 'bond 220 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 311
-        vector = [3,1,1]
-        print 'bond 311 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 222
-        vector = [2,2,2]
-        print 'bond 222 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 400
-        vector = [4,0,0]
-        print 'bond 400 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 133
-        vector = [1,3,3]
-        print 'bond 133 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        # 420
-        vector = [4,2,0]
-        print 'bond 420 for bcc lattice'
-        for constraint in  findForceContantTensorConstraints(vector, lattice, sg229):
-            print constraint
-            
-        return
+    def onNumber(self, number):
+        for i in range(3):
+            if abs(abs(number) - i) < self.epsilon:
+                return self.math.copysign(i, number)
+        return number
+    onReal = onNumber
 
 
-def main():
-    unittest.main()
-    return
+    def onAdd(self, expression):
+        right, left = expression.as_two_terms()
+        left = self.render(left)
+        right = self.render(right)
+        return left+right
 
-if __name__ == '__main__': main()
 
+    def onMul(self, expression):
+        right, left = expression.as_two_terms()
+        left = self.render(left)
+        right = self.render(right)
+        try:
+            return left*right
+        except:
+            return right*left
+exp_cleaner = SympyExpressionCleaner()
 
 # version
 __id__ = "$Id$"

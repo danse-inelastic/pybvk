@@ -21,7 +21,7 @@ class BvKBond(object):
     # settable by users
     A = 0 # index of atom A in the atom list in the atomic structuree
     B = 0 # index of atom B in the atom list in the atomic structuree 
-    Boffset = [0,0,0] # offset vector for atom B. it should be in fractional coords
+    Boffset = [0,0,0] # offset vector for atom B. it should be in cartesian or fractional coords, depending on Boffset_is_fractional
     Boffset_is_fractional = 0 # offset vector is in fractional coords if true
     force_constant_matrix = [[0,0,0], [0,0,0], [0,0,0]] # force constant matrix in cartesian coords
 

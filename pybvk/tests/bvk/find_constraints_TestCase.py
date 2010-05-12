@@ -198,7 +198,7 @@ class TestCase(unittest.TestCase):
         
         # 011
         vector = [0, 1, 1]
-        print 'bond 011 for bcc lattice'
+        print 'bond 011 for sc lattice'
         for constraint in  findForceContantTensorConstraints(vector, lattice, sg221):
             print constraint
             
@@ -216,7 +216,7 @@ class TestCase(unittest.TestCase):
         
         # 011
         vector = [0, 1, 1]
-        print 'bond 011 for bcc lattice'
+        print 'bond 011 for sc lattice'
         constraints = findForceContantTensorConstraints(vector, lattice, sg221)
         for constraint in  constraints:
             print constraint
@@ -227,6 +227,24 @@ class TestCase(unittest.TestCase):
     def test7b(self):
         # simple cubic
         import matter
+        lattice = matter.Lattice(a=3.701, b=3.701, c=3.701, alpha=90, beta=90, gamma=90)
+
+        #
+        from matter.SpaceGroups import sg221
+        
+        # 011
+        vector = [1, 1, 0]
+        print 'bond 110 for sc lattice'
+        constraints = findForceContantTensorConstraints(vector, lattice, sg221)
+        for constraint in  constraints:
+            print constraint
+            
+        return
+
+
+    def test7c(self):
+        # simple cubic
+        import matter
         lattice = matter.Lattice(a=1, b=1, c=1, alpha=90, beta=90, gamma=90)
 
         #
@@ -234,7 +252,7 @@ class TestCase(unittest.TestCase):
         
         # 011
         vector = [0, 1, 1]
-        print 'bond 011 for bcc lattice'
+        print 'bond 011 for sc lattice'
         constraints = findForceContantTensorConstraints(vector, lattice, sg221)
         for constraint in  constraints:
             print constraint

@@ -24,6 +24,37 @@ class BvKModel(object):
 
     long_description = ''
     reference = ''
+
+
+    def __init__(
+        self, matter=None, bonds=[],
+        short_description='', long_description='',
+        reference = '',
+        uses_primitive_unitcell = True
+        ):
+        self.matter = matter
+        self.uses_primitive_unitcell = uses_primitive_unitcell
+        self.short_description = short_description
+        self.bonds = bonds
+        self.long_description = long_description
+        self.reference = reference
+        return
+    
+
+    def addBond(self, A, B, force_constant_matrix,
+                Boffset=(0,0,0), Boffset_is_fractional=0):
+        'create a new bond'
+        from BvKBond import BvKBond
+        bond = BvKBond()
+        bond.matter = self.matter
+        bond.uses_primitive_unitcell = self.uses_primitive_unitcell
+        bond.A = A
+        bond.B = B
+        bond.force_constant_matrix = force_constant_matrix
+        bond.Boffset_is_fractional = Boffset_is_fractional
+        bond.Boffset = Boffset
+        self.bonds.append(bond)
+        return bond
     
     
 # version

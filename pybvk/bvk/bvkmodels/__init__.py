@@ -14,6 +14,4 @@
 # version
 __id__ = "$Id$"
 
-# Generated automatically by PythonMill on Wed Dec 16 13:09:03 2009
-
 # End of file 

@@ -242,6 +242,25 @@ class TestCase(unittest.TestCase):
         return
 
 
+    def test7b1(self):
+        # simple cubic
+        import matter
+        a = 3.701
+        lattice = matter.Lattice(a=a, b=a, c=a, alpha=90, beta=90, gamma=90)
+
+        #
+        from matter.SpaceGroups import sg221
+        
+        # 011
+        vector = [0.5, 0.5, 0.]
+        print 'bond 0.50.50 for sc lattice'
+        constraints = findForceContantTensorConstraints(vector, lattice, sg221)
+        for constraint in  constraints:
+            print constraint
+            
+        return
+
+
     def test7c(self):
         # simple cubic
         import matter

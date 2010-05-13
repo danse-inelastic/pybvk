@@ -32,6 +32,9 @@ def systemFromModel(model, stream=None, filename=None):
         cell = lattice.base.copy()
     cell.shape = -1
 
+    # sites
+    #sites = findSites(matter)
+    
     # atoms
     if uses_primitive_unitcell:
         iteratoms = matter.primitive_unitcell.atoms
@@ -95,6 +98,45 @@ def systemFromModel(model, stream=None, filename=None):
         stream = open(filename, 'w')
 
     _write(cell, atoms, sites, bonds, symRs, stream)
+    return
+
+
+def findSites(structure):
+    '''find unequivalent sites in a structure
+    '''
+    sites = []
+    map = {}
+    for atom in structure:
+
+        # find equivalent site in the existing site list
+        site1 = findEquivalentSite(atom, sites, structure.sg)
+
+        # if found, establishing the mapping and done
+        if site1:
+            map[atom] = site1
+            continue
+
+        # if not found, this is a new site
+        sites.append(atom)
+        map[atom] = atom
+        
+        continue
+        
+    return sites, map
+
+
+
+def findEquivalentSite(atom, sites, spacegroup, epsilon=1e-7):
+    import numpy as np
+    for site in sites:
+        if atom.symbol != site.symbol:
+            continue
+        for symop in spacegroup.symop_list:
+            transformed = symop(atom.xyz)
+            diff = transformed - site.xyz
+            if (np.abs(diff)<epsilon).all(): return site
+            continue
+        continue
     return
 
 
@@ -175,24 +217,6 @@ def writeSymsFile(matrices, f):
         stream.write( pack('=9d', *tuple(m)))
         continue
     return
-
-
-
-import unittest
-class TestCase(unittest.TestCase):
-
-    def test1(self):
-        from bvkmodels import converttobvkmodelobject, ce_295
-        model = converttobvkmodelobject.module2model(ce_295)
-        systemFromModel(model, filename='ce_295')
-        return
-
-
-def main():
-    unittest.main()
-    return
-
-if __name__ == '__main__': main()
 
 
 # version

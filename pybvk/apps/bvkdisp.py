@@ -34,6 +34,7 @@ def run(systempy, system, N, df, inclusive=1):
         'Qgridinfo',
         'Polarizations',
         'Omega2',
+        'WeightedQ',
         ]
     return execute(cmds, workdir=workdir, outputfiles=expected)
 

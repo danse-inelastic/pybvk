@@ -6,75 +6,27 @@
 import os
 
 def run(systempy, system, df, N, Vecs):
-    # can not specify both of systempy and system
-    if systempy and system:
-        raise ValueError, "both systempy and system are specified. systempy=%s, system=%s" %(
-            systempy, system)
     # if neither systempy nor system is specified, it is assumed that we have a "system" file
     if not systempy and not system:
         system = 'system'
 
-    # check if input file exists
-    if system:
-        if not os.path.exists(system):
-            raise RuntimeError, "system file %r does not exist" % system
-        else:
-            systempath = os.path.abspath(system)
-    if systempy:
-        if not os.path.exists(systempy):
-            raise RuntimeError, "system python file %r does not exist" % systempy
-        else:
-            systempypath = os.path.abspath(systempy)
-            systempyfilename = os.path.basename(systempy)
-
-    #
-    Vecs = int(Vecs)
-
-    # make work directory
+    # create temporary work directory
     import tempfile
     workdir = tempfile.mkdtemp()
 
-    # pwd
-    pwd = os.path.abspath(os.curdir)
+    # create the system file in the temporary work directory
+    from bvk.applications.executionharness import createSystem, execute
+    system = createSystem(workdir, systempy=systempy, system=system)
 
+    #
     # build the command to run
-    cmds = []
-    cmds.append('cd %s' % workdir)
-
-    if systempy:
-        cmds.append('cp %s ./' % (systempypath,))
-        cmds.append('python %s' % systempyfilename)
-
-    if system:
-        cmds.append('cp %s ./system' % (systempath,))
-        
-        
-    cmds += [
+    Vecs = int(Vecs)
+    cmds = [
         'bvkrandomQs %s' % N,
         'bvkdisps %s' % Vecs,
         'bvkpartialdos %s %s' % (Vecs, df),
         ]
-    for f in ['DOS']:
-        cmds.append('cp %s %s' % (f, pwd))
-    print cmds
-    spawn(cmds)
-
-    import shutil
-    shutil.rmtree(workdir)
-    return
-
-
-def spawn(cmds):
-    cmd = '&&'.join(cmds) 
-    import os
-    ret = os.system( cmd )
-    if ret: raise RuntimeError, 'cmd %r failed' % (cmd,)
-    return
-
-
-def ispythonfile(f):
-    s = open(f)
-    
+    return execute(cmds, workdir=workdir, outputfiles=['DOS'])
 
 
 from optparse import OptionParser

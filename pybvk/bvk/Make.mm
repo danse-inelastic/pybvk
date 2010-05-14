@@ -14,6 +14,7 @@ PROJECT = bvk
 PACKAGE = bvk
 
 BUILD_DIRS = \
+	applications \
 	bvkmodels \
 	input_generators \
 	orm \

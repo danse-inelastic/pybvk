@@ -15,7 +15,7 @@
 import unittest
 class TestCase(unittest.TestCase):
 
-    def _test1(self):
+    def test1(self):
         from bvk.bvkmodels import converttobvkmodelobject, ce_295, fe_295
 
         model = converttobvkmodelobject.module2model(ce_295)
@@ -28,9 +28,10 @@ class TestCase(unittest.TestCase):
         return
 
 
-    def _test2(self):
-        computeDOS('pb_80')
-        # computeDOS('fe_295')
+    def test2(self):
+        #computeDOS('pb_80')
+        #computeDOS('fe_295')
+        computeDOS('ce_295')
         return
 
 
@@ -52,8 +53,8 @@ class TestCase(unittest.TestCase):
         return
 
 
-    def test_findSites(self):
-        from bvk._utils import findSites
+    def test_findUnequivalentSites(self):
+        from bvk._utils import findUnequivalentSites
 
         import matter
         atom1 = matter.Atom('C', [0,0,0])
@@ -66,9 +67,25 @@ class TestCase(unittest.TestCase):
 
         struct = matter.Structure(atoms=atoms, lattice=lattice, sgid=221)
 
-        print findSites(struct)
+        sites, map = findUnequivalentSites(struct, struct.sg)
+        self.assertEqual(len(sites), 2)
         return
-        
+    
+
+    def test_findUniqueSpecies(self):
+        from bvk._utils import findUniqueSpecies
+
+        import matter
+        atom1 = matter.Atom('C')
+        atom2 = matter.Atom('H')
+        atom3 = matter.Atom('H')
+        atom4 = matter.Atom('H')
+        atoms = [atom1, atom2, atom3, atom4]
+
+        species, map = findUniqueSpecies(atoms)
+        print species, map
+        self.assertEqual(len(species), 2)
+        return
         
 
 
@@ -85,7 +102,7 @@ def computeDOS(modelname, df=0.1, N=40):
 
     from bvk import systemFromModel
     systemFromModel(model, filename=os.path.join(workdir, 'system'))
-
+    
     cmd = 'cd %s && bvkdos.py -d %s -N %s' % (workdir, df, N)
     if (os.system(cmd)):
         raise RuntimeError, '%s failed' % cmd

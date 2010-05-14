@@ -32,18 +32,17 @@ def systemFromModel(model, stream=None, filename=None):
         cell = lattice.base.copy()
     cell.shape = -1
 
-    # sites
-    #sites = findSites(matter)
-    
-    # atoms
+    # species
     if uses_primitive_unitcell:
         iteratoms = matter.primitive_unitcell.atoms
     else:
         iteratoms = matter
+    species,atom2specie  = findUniqueSpecies(iteratoms)
+    # Max's convention: species are called atoms
     atoms = []
-    for atom in iteratoms:
-        symbol = atom.symbol
-        mass = atom.mass * atomic_mass_unit
+    for specie in species:
+        symbol = specie.symbol
+        mass = specie.mass * atomic_mass_unit
         atoms.append([symbol, mass])
         continue
 
@@ -54,8 +53,10 @@ def systemFromModel(model, stream=None, filename=None):
     else:
         cartesian = matter.lattice.cartesian
     #
-    for i, atom in enumerate(iteratoms):
+    for atom in iteratoms:
         x,y,z = cartesian(atom.xyz)
+        specie = atom2specie[atom]
+        i = species.index(specie)
         sites.append([x,y,z, i])
         continue
 
@@ -72,15 +73,18 @@ def systemFromModel(model, stream=None, filename=None):
         assert bond.uses_primitive_unitcell == uses_primitive_unitcell
         #
         A = bond.A; B = bond.B
-        #
+        # vector from A to B. sites[i] is x,y,z, i
+        va2b = np.array(sites[B][:3]) - sites[A][:3]
         Boffset = bond.Boffset
         if bond.Boffset_is_fractional:
             Boffset = cartesian(Boffset)
+        vector = va2b + Boffset
+        #
         #
         m = np.array(bond.force_constant_matrix)
         m.shape = -1
         #
-        bonds.append([A, B] + list(Boffset) + list(m))
+        bonds.append([A, B] + list(vector) + list(m))
         continue
 
     # symRs
@@ -101,15 +105,49 @@ def systemFromModel(model, stream=None, filename=None):
     return
 
 
-def findSites(structure):
+
+def findUniqueSpecies(atoms):
+    '''find the unique species in the given list of atoms'''    
+    species = []
+    map = {}
+    for atom in atoms:
+
+        # find equivalent specie in the existing specie list
+        specie1 = findSpecie(atom, species)
+
+        # if found, establishing the mapping and done
+        if specie1:
+            map[atom] = specie1
+            continue
+
+        # if not found, this is a new specie
+        species.append(atom)
+        map[atom] = atom
+        
+        continue
+        
+    return species, map
+
+
+
+def findSpecie(atom, species):
+    '''find the specie of atom in the list of species. if not found, return None'''
+    for specie in species:
+        if specie.symbol != atom.symbol: continue
+        if specie.mass != atom.mass: continue
+        return specie
+    return
+
+
+def findUnequivalentSites(atoms, sg):
     '''find unequivalent sites in a structure
     '''
     sites = []
     map = {}
-    for atom in structure:
+    for atom in atoms:
 
         # find equivalent site in the existing site list
-        site1 = findEquivalentSite(atom, sites, structure.sg)
+        site1 = findEquivalentSite(atom, sites, sg)
 
         # if found, establishing the mapping and done
         if site1:

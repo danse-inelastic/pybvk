@@ -39,33 +39,71 @@ class TestCase(unittest.TestCase):
 
         # the bonds
         # 1nn
-        fcm1nn = [
+        fcm1nnFePd = [
             1.2682470575527145, 0.00, 0.00,
             0.00,  26.016714720313175,  18.162975610029132,
             0.00,  18.162975610029132,  26.016714720313175,
             ]
-        for i in range(1,4):
-            model.addBond(
-                A=0, B=i,
-                force_constant_matrix = fcm1nn,
-                )
-            model.addBond(
-                A=i, B=0,
-                force_constant_matrix = fcm1nn,
-                )
-
+        model.addBond(
+            A=0, B=1,
+            force_constant_matrix = fcm1nnFePd,
+            )
+        model.addBond(
+            A=1, B=0,
+            force_constant_matrix = fcm1nnFePd,
+            )
+        
         fcm1nnPdPd = [
             46.406513, 54.794806, 0.00,
             59.731856, 46.406513, 0.00,
             0.00,  0.00, -6.391135,
             ]
-        for i in range(1,4):
-            for j in range(1,4):
-                if i==j : continue
-                model.addBond(
-                    A=i, B=j,
-                    force_constant_matrix = fcm1nnPdPd,
-                    )
+        model.addBond(
+            A=1, B=1,
+            force_constant_matrix = fcm1nnPdPd,
+            )
+
+        fcm2nnFeFe = [
+            -16.875965980649628, 0.00, 0.00,
+            0.00,  -16.875965980649628, 0.00,
+            0.00, 0.00,  6.5877296391639888,
+            ]
+        model.addBond(
+            A=0, B=0, Boffset = (0,0,1), Boffset_is_fractional=1,
+            force_constant_matrix = fcm2nnFeFe,
+            )
+
+        fcm2nnPdPd = [
+            -1.000528, 0.00, 0.00,
+            0.00,-1.733573, 0.00,
+            0.00, 0.00, 4.485725,
+            ]
+        model.addBond(
+            A=1, B=1, Boffset = (0,0,1), Boffset_is_fractional=1,
+            force_constant_matrix = fcm2nnPdPd,
+            )
+
+        fcm2nnPdPd = [
+            3.986490, 0.00, 0.00,
+            0.00,-0.457419, 0.00,
+            0.00, 0.00,-0.457419,
+            ]
+        model.addBond(
+            A=1, B=1, Boffset = (1,0,0), Boffset_is_fractional=1,
+            force_constant_matrix = fcm2nnPdPd,
+            )
+        
+        fcm2nnPdPd = [
+            -1, 0.00, 0.00,
+            0.00,4, 0.00,
+            0.00, 0.00,-1,
+            ]
+        model.addBond(
+            A=1, B=1, Boffset = (0,1,0), Boffset_is_fractional=1,
+            force_constant_matrix = fcm2nnPdPd,
+            )
+        
+
         from bvk import systemFromModel
         systemFromModel(model, filename='pd3fe')
         return

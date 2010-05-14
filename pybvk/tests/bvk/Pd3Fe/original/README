@@ -1,0 +1,15 @@
+This directory contains data files from Lisa Maugar for Pd3Fe.
+The files are in the original file format that is supported by
+Max's bvk code.
+
+Use 
+ ./run.sh
+
+to run a computation of phonon density of states and plot it.
+
+
+ * run.sh: compute and plot phonon DOS
+ * pd3fe.py: the bvk model in Max's format. When run, it generates "system" file
+ * System.py: needed by pd3fe.py
+ * syms: a directory with symmetry files needed by pd3fe.py
+

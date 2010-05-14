@@ -21,6 +21,19 @@ def systemFromModel(model, stream=None, filename=None):
 
     model.matter is an instance of matter.Structure
     '''
+    cell, atoms, sites, bonds, symRs = _systemFromModel(model)
+    print cell
+    print atoms
+    print sites
+    print bonds
+    # output
+    if stream is None:
+        stream = open(filename, 'w')
+    _write(cell, atoms, sites, bonds, symRs, stream)
+    return
+
+
+def _systemFromModel(model):
     matter = model.matter
     lattice = matter.lattice
 
@@ -31,6 +44,7 @@ def systemFromModel(model, stream=None, filename=None):
     else:
         cell = lattice.base.copy()
     cell.shape = -1
+    cell = list(cell)
 
     # species
     if uses_primitive_unitcell:
@@ -84,7 +98,7 @@ def systemFromModel(model, stream=None, filename=None):
         m = np.array(bond.force_constant_matrix)
         m.shape = -1
         #
-        bonds.append([A, B] + list(vector) + list(m))
+        bonds.append([sites[A][3], sites[B][3]] + list(vector) + list(m))
         continue
 
     # symRs
@@ -97,12 +111,7 @@ def systemFromModel(model, stream=None, filename=None):
     def toCartesian(R):
         return np.dot(np.dot(binv, R), base)
     symRs = map(toCartesian, symRs)
-    # output
-    if stream is None:
-        stream = open(filename, 'w')
-
-    _write(cell, atoms, sites, bonds, symRs, stream)
-    return
+    return cell, atoms, sites, bonds, symRs
 
 
 

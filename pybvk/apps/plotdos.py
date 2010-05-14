@@ -5,8 +5,9 @@
 def run(path):
     from idf import DOS
     info, e, I = DOS.read(path)
+    N = min(len(e), len(I))
     import pylab
-    pylab.plot(e, I)
+    pylab.plot(e[:N], I[:N])
     pylab.show()
     return
 

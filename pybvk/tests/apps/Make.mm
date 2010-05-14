@@ -25,8 +25,11 @@ PROJ_TIDY += \
 	WeightedQ \
 
 
-PROJ_PYTESTS = signon.py
-PROJ_CPPTESTS = hello 
+PROJ_PYTESTS = \
+	testdisp.sh \
+	testdos.sh \
+
+PROJ_CPPTESTS = 
 PROJ_TESTS = $(PROJ_PYTESTS) $(PROJ_CPPTESTS)
 PROJ_LIBRARIES = -L$(BLD_LIBDIR) -lbvk -llapack
 

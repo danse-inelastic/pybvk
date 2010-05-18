@@ -84,7 +84,8 @@ def _systemFromModel(model):
     bonds = []
     for bond in bondobjs:
         #
-        assert bond.uses_primitive_unitcell == uses_primitive_unitcell
+        if (bond.uses_primitive_unitcell != uses_primitive_unitcell):
+            raise RuntimeError, "bond %s.uses_primitive_unitcell is %s, and is different from the model containing this bond" % (bond, bond.uses_primitive_unitcell)
         #
         A = bond.A; B = bond.B
         # vector from A to B. sites[i] is x,y,z, i

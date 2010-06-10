@@ -25,6 +25,7 @@ EXPORT_BINS1 = \
 EXPORT_PYAPPS = \
 	bvkdisp.py \
 	bvkdos.py \
+	bvkoneq.py \
 	plotdos.py \
 
 

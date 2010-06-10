@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+import numpy
 
 def run(model, Q, cartesian):
     # print model, Q, cartesian
-
+    if not cartesian:
+        Q = toCartesian(Q, model)
+    print 'compute phonon modes for Q=%s' % (Q,)
     # create temporary work directory
     import tempfile, os
     workdir = tempfile.mkdtemp()
@@ -43,9 +46,23 @@ def run(model, Q, cartesian):
     pols = pols[0]
     
     # print omega2, pols
+    from idf._constants import hertz2meV
+    omega2copy = omega2.copy()
+    omega2copy[omega2<0] = 0
+    energies = hertz2meV * numpy.sqrt(omega2copy)
+    
     writeOmegaTxt(omega2, 'omega2')
+    writeOmegaTxt(energies, 'energies')
     writePolsTxt(pols, 'pols')
     return
+
+
+def toCartesian(Q, model):
+    matter = model.matter
+    lattice = matter.lattice
+    recbase = lattice.recbase
+    Q = Q[0]*recbase[0] + Q[1]*recbase[1] + Q[2]*recbase[2]
+    return numpy.pi*2*numpy.array(Q)
 
 
 def writeOmegaTxt(omega2, outfile):
@@ -85,7 +102,6 @@ def readPols():
 def createWeightedQ(Q, outfile):
     from idf import WeightedQ
     NQ = 1; D = 3
-    import numpy
     Q = numpy.array(Q)
     Q.shape = NQ, D
     weight = numpy.ones((NQ,1), float)

@@ -28,12 +28,14 @@ class Inventory(InvBase):
         )
 
     short_description = InvBase.d.str(name='short_description', label='description')
+    short_description.tip = 'a short description'
 
     bonds = InvBase.d.referenceSet(name='bonds', targettype=BvKBond, owned=1)
 
     long_description = InvBase.d.str(name='long_description', label='details', max_length=2048)
-    reference = InvBase.d.str(name='reference', max_length=1024)
     
+    reference = InvBase.d.str(name='reference', max_length=1024)
+    reference.tip = 'The origin of this model'
     
     dbtablename = 'bvkmodels'
 

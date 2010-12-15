@@ -38,7 +38,7 @@ class Inventory(InvBase):
     Boffset.tip = 'Offset vector of atom 2 relative to its canonical position defined in the atomic structure'
     Boffset.help = 'A bond has two atoms. This is for the second atom in the bond. You will need to input the offset of the atom 2 relative to its canonical position inside the unitcell'
 
-    Boffset_is_fractional = InvBase.d.bool(name='Boffset_is_fractional', default=0)
+    Boffset_is_fractional = InvBase.d.bool(name='Boffset_is_fractional', default=1)
     Boffset_is_fractional.label = 'Atom 2 offset is fractional'
     Boffset_is_fractional.tip = 'When set, the offset vector of atom 2 is in fractional coordinates. Otherwise, it is in cartesian coordinates'
 

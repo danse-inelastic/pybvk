@@ -26,6 +26,12 @@ class BvKBond(object):
     force_constant_matrix = [[0,0,0], [0,0,0], [0,0,0]] # force constant matrix in cartesian coords
 
 
+    def copy(self):
+        # a shallow copy is good for now
+        import copy
+        return copy.copy(self)
+    
+
     def __str__(self):
         return 'bond: atom %s to atom % shifted %s:\n%s' % (
             self.A, self.B, self.Boffset, numpy.array(self.force_constant_matrix))

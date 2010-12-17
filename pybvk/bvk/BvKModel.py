@@ -55,6 +55,19 @@ class BvKModel(object):
         bond.Boffset = Boffset
         self.bonds.append(bond)
         return bond
+
+
+    def copy(self):
+        bonds = [bond.copy() for bond in self.bonds]
+        copy = self.__class__(
+            matter=self.matter,
+            uses_primitive_unitcell = self.uses_primitive_unitcell,
+            short_description = self.short_description,
+            bonds = bonds,
+            long_description = self.long_description,
+            reference = self.reference,
+            )
+        return copy
     
     
 # version

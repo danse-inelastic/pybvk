@@ -37,20 +37,15 @@ def _systemFromModel(model):
     matter = model.matter
     lattice = matter.lattice
 
-    # cell
     uses_primitive_unitcell = model.uses_primitive_unitcell
-    if uses_primitive_unitcell:
-        cell = matter.primitive_unitcell.base.copy()
-    else:
-        cell = lattice.base.copy()
+    
+    # cell: the primitive one
+    cell = matter.primitive_unitcell.base.copy()
     cell.shape = -1
     cell = list(cell)
 
-    # species
-    if uses_primitive_unitcell:
-        iteratoms = matter.primitive_unitcell.atoms
-    else:
-        iteratoms = matter
+    # species: the atoms in the primitive cell
+    iteratoms = matter.primitive_unitcell.atoms
     species,atom2specie  = findUniqueSpecies(iteratoms)
     # Max's convention: species are called atoms
     atoms = []
@@ -59,13 +54,10 @@ def _systemFromModel(model):
         mass = specie.mass * atomic_mass_unit
         atoms.append([symbol, mass])
         continue
-
-    # sites
+    
+    # sites in the primitive cell
     sites = []
-    if uses_primitive_unitcell:
-        cartesian = matter.primitive_unitcell.cartesian
-    else:
-        cartesian = matter.lattice.cartesian
+    cartesian = matter.primitive_unitcell.cartesian
     #
     for atom in iteratoms:
         x,y,z = cartesian(atom.xyz)
@@ -84,22 +76,23 @@ def _systemFromModel(model):
     bonds = []
     for bond in bondobjs:
         #
-        if (bond.uses_primitive_unitcell != uses_primitive_unitcell):
+        if bond.uses_primitive_unitcell != uses_primitive_unitcell:
             raise RuntimeError, "bond %s.uses_primitive_unitcell is %s, and is different from the model containing this bond" % (bond, bond.uses_primitive_unitcell)
         #
+        vector = bond.getBondVectorInCartesianCoords()
         A = bond.A; B = bond.B
-        # vector from A to B. sites[i] is x,y,z, i
-        va2b = np.array(sites[B][:3]) - sites[A][:3]
-        Boffset = bond.Boffset
-        if bond.Boffset_is_fractional:
-            Boffset = cartesian(Boffset)
-        vector = va2b + Boffset
+        if not bond.uses_primitive_unitcell:
+            iA = matter.primitive_unitcell.getAtomIndex(matter[A])
+            iB = matter.primitive_unitcell.getAtomIndex(matter[B])
+        else:
+            iA = sites[A][3]
+            iB = sites[B][3]
         #
         #
         m = np.array(bond.force_constant_matrix)
         m.shape = -1
         #
-        bonds.append([sites[A][3], sites[B][3]] + list(vector) + list(m))
+        bonds.append([iA, iB] + list(vector) + list(m))
         continue
 
     # symRs

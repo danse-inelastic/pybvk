@@ -1,16 +1,16 @@
 # -*- Python -*-
 # Jiao Lin <linjiao@caltech.edu>
 
-import numpy as np
+import numpy as np, sys
 
 
 def uniqueBonds(structure):
     n = len(structure)
     r = []
     for i in range(n):
+        print >> sys.stderr, "working on i=%s" % (i,)
         for j in range(n):
             p = (i,j)
-            print "examinng: %s" % (p,)
             unique = True
             for p2 in r:
                 if identicalBond(p, p2, structure):

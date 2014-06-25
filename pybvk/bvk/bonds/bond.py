@@ -55,8 +55,12 @@ def identicalBondAB(pair1, pair2, structure):
         b1, b2 = pair2
         x1b = structure[b1].xyz
         x2b = structure[b2].xyz
-        dis = (x1b-x1) - (x2b-x2)
-        if almostEqual(np.linalg.norm(dis), 0):
+        disp1 = x1b-x1
+        disp2 = x2b-x2
+        delta = disp1 - disp2  # two displacements should be the same if bond is identical
+        delta2 = disp1 - np.round(disp1) # the displacement should be a lattice vector
+        if almostEqual(np.linalg.norm(delta), 0) \
+                and almostEqual(np.linalg.norm(delta2), 0):
             return True
         continue
     return False

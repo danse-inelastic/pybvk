@@ -4,9 +4,10 @@
 
 def test():
     from bvk.bonds.poscar import load
-    structure = load("SnTe/POSCAR.txt", 225)
-    for symop in structure.sg.iter_symops():
-        print symop.R, symop.t
+    structure = load("POSCAR-test-out-of-box-atom", 225)
+    oob = structure[-1]
+    print oob
+    assert oob.xyz[0] == 1.5
     return
 
 def main():

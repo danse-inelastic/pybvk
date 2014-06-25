@@ -15,6 +15,7 @@ PACKAGE = bvk
 
 BUILD_DIRS = \
 	applications \
+	bonds \
 	bvkmodels \
 	input_generators \
 	orm \
